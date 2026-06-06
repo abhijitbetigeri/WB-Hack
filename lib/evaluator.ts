@@ -1,7 +1,5 @@
-import { wandbClient, JUDGE_MODEL } from './wandb'
+import { getWandbClient, weaveReady, JUDGE_MODEL } from './wandb'
 import type { VibeBlueprint } from './insforge'
-
-const client = wandbClient
 
 // Threshold: average of 8 principle scores must exceed this to be "high" signal
 const SCORE_THRESHOLD = 0
@@ -243,7 +241,8 @@ export async function evaluateComment(
     .replace('{creator_context}', creatorContext)
     .replace('{fan_comment}', comment)
 
-  const completion = await client.chat.completions.create({
+  await weaveReady()
+  const completion = await getWandbClient().chat.completions.create({
     model: JUDGE_MODEL,
     messages: [{ role: 'user', content: prompt }],
     temperature: 0,
