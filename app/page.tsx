@@ -253,7 +253,7 @@ export default function Home() {
             <div className="flex items-center gap-4 mt-3 text-[11px] text-slate-600">
               <span>Apify scraping</span>
               <span className="w-1 h-1 rounded-full bg-slate-700 inline-block" />
-              <span>Nebius LLM</span>
+              <span>WandB LLM</span>
               <span className="w-1 h-1 rounded-full bg-slate-700 inline-block" />
               <span>Tigris storage</span>
               <span className="w-1 h-1 rounded-full bg-slate-700 inline-block" />
@@ -424,7 +424,7 @@ export default function Home() {
       <footer className="border-t border-white/[0.05] px-6 py-4 mt-8">
         <div className="max-w-5xl mx-auto flex items-center justify-between text-[11px] text-slate-700">
           <span>Syntropimaxx · Applied Intelligence Hackathon 2026</span>
-          <span>HumaneBench · Nebius · Tigris · InsForge · Apify</span>
+          <span>HumaneBench · WandB · Tigris · InsForge · Apify</span>
         </div>
       </footer>
     </div>
