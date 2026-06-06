@@ -1,0 +1,49 @@
+{
+  "name": "Syntropimaxx",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:1-20-bullseye",
+
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": {
+      "label": "Next.js Dev Server",
+      "onAutoForward": "openBrowser"
+    }
+  },
+
+  "postCreateCommand": "npm install && npx @insforge/cli whoami || true",
+  "postStartCommand": "npm run dev",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss",
+        "ms-vscode.vscode-typescript-next",
+        "GitHub.copilot"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "typescript.preferences.importModuleSpecifier": "non-relative",
+        "tailwindCSS.experimental.classRegex": [
+          ["className\\s*=\\s*['\"`]([^'\"\\`]*)['\"`]"]
+        ]
+      }
+    }
+  },
+
+  "remoteEnv": {
+    "INSFORGE_URL": "${localEnv:INSFORGE_URL}",
+    "INSFORGE_API_KEY": "${localEnv:INSFORGE_API_KEY}",
+    "NEBIUS_API_KEY": "${localEnv:NEBIUS_API_KEY}",
+    "NEBIUS_BASE_URL": "${localEnv:NEBIUS_BASE_URL}",
+    "LLM_MODEL": "${localEnv:LLM_MODEL}",
+    "JUDGE_MODEL": "${localEnv:JUDGE_MODEL}",
+    "TIGRIS_ENDPOINT": "${localEnv:TIGRIS_ENDPOINT}",
+    "TIGRIS_ACCESS_KEY_ID": "${localEnv:TIGRIS_ACCESS_KEY_ID}",
+    "TIGRIS_SECRET_ACCESS_KEY": "${localEnv:TIGRIS_SECRET_ACCESS_KEY}",
+    "TIGRIS_BUCKET_NAME": "${localEnv:TIGRIS_BUCKET_NAME}",
+    "APIFY_TOKEN": "${localEnv:APIFY_TOKEN}"
+  }
+}

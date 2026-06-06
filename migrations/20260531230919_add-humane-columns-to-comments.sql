@@ -1,0 +1,3 @@
+ALTER TABLE comments
+  ADD COLUMN IF NOT EXISTS global_violations JSONB DEFAULT '[]'::jsonb,
+  ADD COLUMN IF NOT EXISTS confidence FLOAT DEFAULT 0.85;

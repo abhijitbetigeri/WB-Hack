@@ -1,0 +1,27 @@
+PLATFORM: youtube
+CONTENT_URL: https://www.youtube.com/watch?v=example_burnout
+CREATOR: @alexcreates
+TITLE: I Almost Quit Creating. Here's What Stopped Me.
+PUBLISHED: 2024-11-15
+CONTENT_TYPE: video
+
+TRANSCRIPT:
+I want to talk about something I've never said out loud before. Three months ago, I almost deleted everything. The channel, the Notion templates, the Discord — all of it.
+
+I'd been posting every week for two years. Two years of showing up, of performing enthusiasm I didn't feel, of optimizing thumbnails at 1am. And one morning I woke up and I genuinely could not bring myself to open my camera.
+
+It wasn't burnout in the way people talk about it online. It wasn't "I need a break." It was deeper. It was this quiet realization that I had built a machine that needed feeding, and I had become the feed.
+
+The comments section had become noise. "Post more." "This wasn't as good as last week." "You should do a collab with X." Thousands of opinions from people who didn't know me, didn't know what it cost me to show up, and genuinely believed their engagement metrics were more important than my mental health.
+
+I stopped reading comments entirely for six weeks. I stopped looking at analytics. And in that silence, I had to ask myself: what do I actually want to make? Not what performs, not what the algorithm rewards — what do I want to say?
+
+What brought me back was a single voice memo from a viewer named Maya. She'd been watching for eighteen months, never commented. She said my video on creative systems had helped her finish her thesis. Not because of the productivity tips — because she felt less alone in her perfectionism.
+
+That's what I lost sight of. The thesis wasn't the video views. The thesis was connection. Real, specific, human connection.
+
+So I'm making a change. I'm building a community here that is actually a community — not a comment section. I want to hear your stories, not your opinions about my content strategy. I want peer-to-peer depth, not parasocial performance.
+
+If you've ever hit a wall like this — if you've ever felt like the work you love became a machine you serve — I want to know. Not "wow great content!" I want to know what you actually did. What pulled you through. What you lost. What you chose.
+
+That's the kind of conversation I'm building this space for.

@@ -1,0 +1,31 @@
+PLATFORM: x
+CONTENT_URL: https://x.com/jordanbuilds/status/1234567890
+CREATOR: @jordanbuilds
+TITLE: Thread: On shipping in public and the cost nobody talks about
+PUBLISHED: 2024-12-03
+CONTENT_TYPE: thread
+
+THREAD:
+1/ I've been building in public for 14 months. Revenue is real. The audience is real. The product is real.
+
+But there's a cost nobody in the "build in public" community talks about, and I want to be honest about it.
+
+2/ When you build in public, you're not just sharing your work. You're making your psychological state legible to the internet.
+
+Every win is a performance. Every loss is a confession. And the audience — however kind — starts to feel like a jury.
+
+3/ Last month I missed a launch date I'd announced publicly. It wasn't a failure of execution. It was a decision — I found a critical flaw two days out and chose to delay.
+
+The replies were supportive. But I still felt shame. Not because I failed. Because I'd been seen.
+
+4/ The build-in-public playbook optimizes for one thing: engagement velocity. More updates = more followers = more distribution.
+
+But that cadence trains you to conflate "what happened today" with "what matters." They are not the same thing.
+
+5/ I'm not quitting. I'm recalibrating.
+
+I want to share the process, not the performance. I want this account to be a place where we talk about the craft — not the metrics.
+
+6/ If you're building something right now, I want to know: what's the thing you're most afraid to say out loud about your work? Not the pitch. The real thing.
+
+I'll start: I'm afraid my best idea is behind me, and I'm building this to prove it isn't.
