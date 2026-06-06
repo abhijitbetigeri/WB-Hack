@@ -1,4 +1,4 @@
-import { getWandbClient, weaveReady, JUDGE_MODEL } from './wandb'
+import { wandbClient, weaveReady, op, JUDGE_MODEL } from './wandb'
 import type { VibeBlueprint } from './insforge'
 
 // Threshold: average of 8 principle scores must exceed this to be "high" signal
@@ -225,10 +225,11 @@ function parseLLMResponse(raw: string): unknown {
 // Main export
 // ---------------------------------------------------------------------------
 
-export async function evaluateComment(
+// @weave.op equivalent — each comment grading appears as a named trace
+export const evaluateComment = op(async (
   comment: string,
   blueprint: VibeBlueprint
-): Promise<EvalResult> {
+): Promise<EvalResult> => {
   const creatorContext = [
     `Emotional state: ${blueprint.vibe_state.emotional_context}`,
     `Creator's vibe: ${blueprint.vibe_state.description}`,
@@ -242,7 +243,7 @@ export async function evaluateComment(
     .replace('{fan_comment}', comment)
 
   await weaveReady()
-  const completion = await getWandbClient().chat.completions.create({
+  const completion = await wandbClient.chat.completions.create({
     model: JUDGE_MODEL,
     messages: [{ role: 'user', content: prompt }],
     temperature: 0,
@@ -278,4 +279,4 @@ export async function evaluateComment(
     signalLevel: score > SCORE_THRESHOLD ? 'high' : 'low',
     reasoning,
   }
-}
+})

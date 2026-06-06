@@ -1,4 +1,4 @@
-import { getWandbClient, weaveReady, LLM_MODEL } from './wandb'
+import { wandbClient, weaveReady, op, LLM_MODEL } from './wandb'
 import type { VibeBlueprint } from './insforge'
 
 const BLUEPRINT_SYSTEM = `You are Syntropimaxx, an AI that analyzes creator content and returns a Vibe Blueprint JSON.
@@ -28,9 +28,10 @@ Return ONLY valid JSON matching this exact schema:
   }
 }`
 
-export async function generateVibeBlueprint(transcript: string): Promise<VibeBlueprint> {
+// @weave.op equivalent — each call appears as a named trace in WandB Weave
+export const generateVibeBlueprint = op(async (transcript: string): Promise<VibeBlueprint> => {
   await weaveReady()
-  const completion = await getWandbClient().chat.completions.create({
+  const completion = await wandbClient.chat.completions.create({
     model: LLM_MODEL,
     messages: [
       { role: 'system', content: BLUEPRINT_SYSTEM },
@@ -45,14 +46,14 @@ export async function generateVibeBlueprint(transcript: string): Promise<VibeBlu
 
   const raw = completion.choices[0].message.content ?? '{}'
   return JSON.parse(raw) as VibeBlueprint
-}
+})
 
-export async function generatePromptChips(
+export const generatePromptChips = op(async (
   blueprint: VibeBlueprint,
   lowSignalComment: string
-): Promise<string[]> {
+): Promise<string[]> => {
   await weaveReady()
-  const completion = await getWandbClient().chat.completions.create({
+  const completion = await wandbClient.chat.completions.create({
     model: LLM_MODEL,
     messages: [
       {
@@ -78,4 +79,4 @@ Generate 3 replacement prompt chips that would lead to high-quality responses.`,
   const raw = completion.choices[0].message.content ?? '[]'
   const parsed = JSON.parse(raw)
   return Array.isArray(parsed) ? parsed : parsed.chips ?? blueprint.contextual_prompts.prompt_chips
-}
+})

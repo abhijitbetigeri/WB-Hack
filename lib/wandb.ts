@@ -1,44 +1,36 @@
 import OpenAI from 'openai'
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const { init, wrapOpenAI } = require('weave')
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const weave = require('weave')
+
+export const WANDB_PROJECT  = 'abhijitbetigeri29-hackathon26/inference'
 export const WANDB_BASE_URL = 'https://api.inference.wandb.ai/v1'
 
-// Initialise Weave here (in addition to instrumentation.ts) so the client is
-// always wrapped even if the module is loaded before instrumentation runs.
+// Mirrors the Python pattern:
+//   weave.init('abhijitbetigeri29-hackathon26/inference')
+//   client = OpenAI(base_url=..., api_key=..., project=...)
 let _weaveReady: Promise<void> | null = null
-
-function ensureWeave(): Promise<void> {
+export function weaveReady(): Promise<void> {
   if (!_weaveReady) {
-    _weaveReady = init('abhijitbetigeri29-hackathon26/inference').catch(() => {
-      _weaveReady = null // allow retry on next call if init fails
-    })
+    _weaveReady = weave.init(WANDB_PROJECT).catch(() => { _weaveReady = null })
   }
   return _weaveReady!
 }
 
-function makeClient() {
-  const raw = new OpenAI({ baseURL: WANDB_BASE_URL, apiKey: process.env.WANDB_API_KEY! })
-  try {
-    return wrapOpenAI(raw)
-  } catch {
-    return raw
-  }
+export const wandbClient = new OpenAI({
+  baseURL: WANDB_BASE_URL,
+  apiKey: process.env.WANDB_API_KEY!,
+  // Passes project context to WandB inference endpoint (equivalent to
+  // project=... in the Python OpenAI constructor)
+  defaultHeaders: { 'OpenAI-Project': WANDB_PROJECT },
+})
+
+// Equivalent to @weave.op — wraps a function so its calls appear as traces
+// in the WandB Weave dashboard
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function op<T extends (...args: any[]) => Promise<any>>(fn: T): T {
+  return weave.op(fn) as T
 }
 
-// Lazy singleton — created on first use so Weave has time to initialise.
-let _client: OpenAI | null = null
-
-export function getWandbClient(): OpenAI {
-  if (!_client) _client = makeClient()
-  return _client!
-}
-
-// Ensure Weave is initialised before any LLM call.
-export async function weaveReady(): Promise<void> {
-  await ensureWeave()
-}
-
-// Override model IDs via env after checking your WandB inference dashboard
-export const LLM_MODEL   = process.env.WANDB_LLM_MODEL   ?? 'meta-llama/Llama-3.1-70B-Instruct'
-export const JUDGE_MODEL = process.env.WANDB_JUDGE_MODEL  ?? 'meta-llama/Llama-3.1-70B-Instruct'
+export const LLM_MODEL   = process.env.WANDB_LLM_MODEL   ?? 'OpenPipe/Qwen3-14B-Instruct'
+export const JUDGE_MODEL = process.env.WANDB_JUDGE_MODEL  ?? 'OpenPipe/Qwen3-14B-Instruct'

@@ -208,7 +208,7 @@ export async function evaluateInSandbox(
       creatorContext,
       wandbApiKey: process.env.WANDB_API_KEY!,
       wandbBaseUrl: 'https://api.inference.wandb.ai/v1',
-      judgeModel: process.env.WANDB_JUDGE_MODEL ?? 'meta-llama/Llama-3.1-70B-Instruct',
+      judgeModel: process.env.WANDB_JUDGE_MODEL ?? 'OpenPipe/Qwen3-14B-Instruct',
     }
 
     // Write input.json via base64 to handle any special chars
