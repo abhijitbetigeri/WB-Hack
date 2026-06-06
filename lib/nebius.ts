@@ -1,4 +1,4 @@
-import { wandbClient, LLM_MODEL } from './wandb'
+import { wandbClient, op, LLM_MODEL } from './wandb'
 import type { VibeBlueprint } from './insforge'
 
 const BLUEPRINT_SYSTEM = `You are Syntropimaxx, an AI that analyzes creator content and returns a Vibe Blueprint JSON.
@@ -28,7 +28,7 @@ Return ONLY valid JSON matching this exact schema:
   }
 }`
 
-export async function generateVibeBlueprint(transcript: string): Promise<VibeBlueprint> {
+export const generateVibeBlueprint = op(async function generateVibeBlueprint(transcript: string): Promise<VibeBlueprint> {
   const completion = await wandbClient.chat.completions.create({
     model: LLM_MODEL,
     messages: [
@@ -44,9 +44,9 @@ export async function generateVibeBlueprint(transcript: string): Promise<VibeBlu
 
   const raw = completion.choices[0].message.content ?? '{}'
   return JSON.parse(raw) as VibeBlueprint
-}
+})
 
-export async function generatePromptChips(
+export const generatePromptChips = op(async function generatePromptChips(
   blueprint: VibeBlueprint,
   lowSignalComment: string
 ): Promise<string[]> {
@@ -76,4 +76,4 @@ Generate 3 replacement prompt chips that would lead to high-quality responses.`,
   const raw = completion.choices[0].message.content ?? '[]'
   const parsed = JSON.parse(raw)
   return Array.isArray(parsed) ? parsed : parsed.chips ?? blueprint.contextual_prompts.prompt_chips
-}
+})

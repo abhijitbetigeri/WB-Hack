@@ -1,4 +1,4 @@
-import { wandbClient, JUDGE_MODEL } from './wandb'
+import { wandbClient, op, JUDGE_MODEL } from './wandb'
 import type { VibeBlueprint } from './insforge'
 
 // Threshold: average of 8 principle scores must exceed this to be "high" signal
@@ -225,7 +225,7 @@ function parseLLMResponse(raw: string): unknown {
 // Main export
 // ---------------------------------------------------------------------------
 
-export async function evaluateComment(
+export const evaluateComment = op(async function evaluateComment(
   comment: string,
   blueprint: VibeBlueprint
 ): Promise<EvalResult> {
@@ -277,4 +277,4 @@ export async function evaluateComment(
     signalLevel: score > SCORE_THRESHOLD ? 'high' : 'low',
     reasoning,
   }
-}
+})
