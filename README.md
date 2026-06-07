@@ -158,8 +158,8 @@ lib/
 ### 1. Frontend (Next.js)
 
 ```bash
-git clone https://github.com/abhijitbetigeri/Syntropimaxx.git
-cd Syntropimaxx
+git clone https://github.com/abhijitbetigeri/WB-Hack.git
+cd WB-Hack
 npm install
 cp .env.local.example .env.local   # fill in env vars (see below)
 npm run dev
