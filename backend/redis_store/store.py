@@ -1,8 +1,10 @@
 import os
 import json
+import socket
 import hashlib
 import numpy as np
 import redis as redis_lib
+from urllib.parse import urlparse
 from redisvl.index import SearchIndex
 from redisvl.schema import IndexSchema
 from redisvl.query import VectorQuery
@@ -26,10 +28,22 @@ def _get_model() -> SentenceTransformer:
     return _model
 
 
+def _force_ipv4_url(url: str) -> str:
+    """Rewrite URL hostname to its IPv4 address — fixes macOS errno 49 on Redis Cloud."""
+    try:
+        p = urlparse(url)
+        ipv4 = socket.getaddrinfo(p.hostname, p.port, socket.AF_INET)[0][4][0]
+        auth = f"{p.username}:{p.password}@" if p.password else (f"{p.username}@" if p.username else "")
+        return f"{p.scheme}://{auth}{ipv4}:{p.port or 6379}{p.path or ''}"
+    except Exception:
+        return url
+
+
 def _get_redis() -> redis_lib.Redis:
     global _redis
     if _redis is None:
-        _redis = redis_lib.from_url(os.getenv("REDIS_URL", "redis://localhost:6379"))
+        url = _force_ipv4_url(os.getenv("REDIS_URL", "redis://localhost:6379"))
+        _redis = redis_lib.from_url(url)
     return _redis
 
 

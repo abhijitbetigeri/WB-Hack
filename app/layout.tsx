@@ -8,8 +8,8 @@ const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Syntropimaxx — Multi-Agent Creator Intelligence",
-  description: "Multi-agent HumaneBench v3.0 comment grading powered by WandB + Redis",
+  title: "CCIP — Content Creators Intelligence Platform",
+  description: "Multi-agent HumaneBench v3.0 comment grading powered by WandB + Redis VL",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

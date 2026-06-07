@@ -1,31 +1,32 @@
-// Shared CopilotKit runtime + handler — imported by both route.ts and [[...path]]/route.ts
-import { CopilotRuntime, BuiltInAgent, createCopilotRuntimeHandler } from '@copilotkit/runtime/v2'
-import { createOpenAICompatible } from '@ai-sdk/openai-compatible'
-import type { NextRequest } from 'next/server'
+import {
+  CopilotRuntime,
+  OpenAIAdapter,
+  copilotRuntimeNextJSAppRouterEndpoint,
+} from '@copilotkit/runtime'
+import OpenAI from 'openai'
 
-const wandb = createOpenAICompatible({
-  name: 'wandb',
+const openai = new OpenAI({
   baseURL: 'https://api.inference.wandb.ai/v1',
   apiKey: process.env.WANDB_API_KEY ?? '',
-  headers: { 'OpenAI-Project': 'abhijitbetigeri29-hackathon26/inference' },
-})
-
-const model = wandb(process.env.WANDB_LLM_MODEL ?? 'OpenPipe/Qwen3-14B-Instruct')
-
-const runtime = new CopilotRuntime({
-  agents: {
-    default: new BuiltInAgent({ model }),
+  defaultHeaders: {
+    'OpenAI-Project': 'abhijitbetigeri29-hackathon26/inference',
   },
 })
 
-export const handler = createCopilotRuntimeHandler({
+const serviceAdapter = new OpenAIAdapter({
+  openai,
+  model: process.env.WANDB_LLM_MODEL ?? 'OpenPipe/Qwen3-14B-Instruct',
+})
+
+const runtime = new CopilotRuntime()
+
+const { handleRequest } = copilotRuntimeNextJSAppRouterEndpoint({
   runtime,
-  basePath: '/api/copilotkit',
-  cors: {
-    origin: '*',
-    allowHeaders: ['*'],
-    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  },
+  serviceAdapter,
+  endpoint: '/api/copilotkit',
 })
 
-export type Handler = (req: NextRequest) => Promise<Response>
+// copilotRuntimeNextJSAppRouterEndpoint returns { handleRequest }, not { GET, POST, OPTIONS }
+export const GET = handleRequest
+export const POST = handleRequest
+export const OPTIONS = handleRequest

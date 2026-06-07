@@ -28,11 +28,11 @@ interface Props {
 
 function Section({ label, principle, children }: { label: string; principle?: string; children: React.ReactNode }) {
   return (
-    <div className="px-5 py-4 border-b border-white/[0.05] last:border-0">
+    <div className="px-5 py-4 border-b border-slate-100 last:border-0">
       <div className="flex items-center gap-2 mb-2">
-        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{label}</span>
+        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{label}</span>
         {principle && (
-          <span className="text-[10px] text-slate-700 font-medium">· {principle}</span>
+          <span className="text-[10px] text-slate-400 font-medium">· {principle}</span>
         )}
       </div>
       {children}
@@ -59,7 +59,7 @@ export default function VibeBlueprintCard({ blueprint, creatorHandle, platform }
   return (
     <div className="flex flex-col gap-2">
       {/* Main card — overflow-hidden safe because chat panel is a sibling */}
-      <div className="rounded-2xl border border-white/[0.08] bg-[#1e2048] overflow-hidden flex flex-col">
+      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden flex flex-col">
         {/* Gradient header */}
         <div className="relative px-5 py-5 bg-gradient-to-br from-violet-600 via-indigo-600 to-purple-700 overflow-hidden">
           <div className="absolute inset-0 opacity-20"
@@ -97,12 +97,12 @@ export default function VibeBlueprintCard({ blueprint, creatorHandle, platform }
                 <span className={`w-1.5 h-1.5 rounded-full ${emotion.dot}`} />
                 {blueprint.vibe_state.emotional_context}
               </span>
-              <p className="text-sm text-slate-400 leading-snug">{blueprint.vibe_state.description}</p>
+              <p className="text-sm text-slate-600 leading-snug">{blueprint.vibe_state.description}</p>
             </div>
           </Section>
 
           <Section label="True Intent" principle={PRINCIPLE_LABELS[blueprint.true_intent.humanebench_principle]}>
-            <p className="text-sm font-semibold text-slate-200 capitalize mb-0.5">{blueprint.true_intent.community_need}</p>
+            <p className="text-sm font-semibold text-slate-800 capitalize mb-0.5">{blueprint.true_intent.community_need}</p>
             <p className="text-xs text-slate-500 leading-relaxed">{blueprint.true_intent.description}</p>
           </Section>
 
@@ -120,14 +120,14 @@ export default function VibeBlueprintCard({ blueprint, creatorHandle, platform }
 
       {/* AI chat panel — sibling of overflow-hidden card so input is never clipped */}
       {chatOpen && (
-        <div className="rounded-2xl border border-violet-500/20 bg-[#0f0f2e] flex flex-col">
-          <div className="flex items-center justify-between px-4 py-2.5 border-b border-violet-500/10">
-            <span className="text-[10px] text-violet-400 font-bold uppercase tracking-wider">✦ Blueprint AI — {creatorHandle}</span>
-            <button onClick={() => setChatOpen(false)} className="text-slate-600 hover:text-slate-400 text-sm transition-colors">✕</button>
+        <div className="rounded-2xl border border-violet-200 bg-white shadow-sm flex flex-col">
+          <div className="flex items-center justify-between px-4 py-2.5 border-b border-violet-100">
+            <span className="text-[10px] text-violet-600 font-bold uppercase tracking-wider">✦ Blueprint AI — {creatorHandle}</span>
+            <button onClick={() => setChatOpen(false)} className="text-slate-400 hover:text-slate-600 text-sm transition-colors">✕</button>
           </div>
           <div className="h-80">
             <CopilotChat
-              instructions={`You are the Syntropimaxx Blueprint AI. You have access to the Vibe Blueprint for ${creatorHandle}.
+              instructions={`You are the CCIP Blueprint AI. You have access to the Vibe Blueprint for ${creatorHandle}.
 The creator's emotional context is "${blueprint.vibe_state.emotional_context}": ${blueprint.vibe_state.description}
 Their true intent is "${blueprint.true_intent.community_need}": ${blueprint.true_intent.description}
 Interaction boundaries to avoid: ${blueprint.interaction_boundaries.avoid.join(', ')}.

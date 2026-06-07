@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #08081a;
-  --foreground: #e2e8f0;
+  --background: #ffffff;
+  --foreground: #0f172a;
 }
 
 @theme inline {
@@ -18,10 +18,9 @@ body {
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
 
-/* Subtle animated gradient orbs in the background */
 .bg-scene {
   background:
-    radial-gradient(ellipse 80% 50% at 20% -10%, rgba(124, 58, 237, 0.15) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 40% at 80% 110%, rgba(79, 70, 229, 0.12) 0%, transparent 60%),
-    #08081a;
+    radial-gradient(ellipse 80% 50% at 20% -10%, rgba(124, 58, 237, 0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 110%, rgba(79, 70, 229, 0.05) 0%, transparent 60%),
+    #f8fafc;
 }

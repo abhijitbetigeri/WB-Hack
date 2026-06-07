@@ -1,6 +1,6 @@
 'use client'
 import { useState, useMemo } from 'react'
-import { useCopilotReadable, useCopilotChatSuggestions } from '@copilotkit/react-core'
+import { useCopilotReadable } from '@copilotkit/react-core'
 import { CopilotChat } from '@copilotkit/react-ui'
 import { gradeStyle, type GradedComment } from '@/lib/grader'
 
@@ -108,20 +108,6 @@ export default function CommentGradingFeed({ comments, source, evaluatedInSandbo
       : null,
   })
 
-  useCopilotChatSuggestions({
-    instructions: selectedComment
-      ? `User selected a comment graded "${selectedComment.grade}" (score ${selectedComment.score}). Suggest exactly 3 short questions:
-1. Why did this comment get ${selectedComment.grade}?
-2. Which specific principle pulled the score down most?
-3. How could this comment be rewritten to get a higher grade?`
-      : `Suggest 3 short, distinct questions about this HumaneBench v3.0 comment audit:
-1. A grade-distribution question (e.g. "How many comments got an A or higher?")
-2. A creator-value question (e.g. "Which comment adds the most value for the creator?")
-3. A summary question (e.g. "What does the overall vibe audit say about this community?")`,
-    minSuggestions: 3,
-    maxSuggestions: 3,
-  })
-
   // Build system prompt — comprehensive for all 4 question types
   const systemPrompt = useMemo(() => {
     const gradeScale = `A+ (≥0.875) → A (≥0.625) → B (≥0.375) → C (≥0.125) → D (≥-0.125) → F (below)`
@@ -147,7 +133,7 @@ Principle breakdown: ${selectedComment.principles.map(p => `${PRINCIPLE_LABEL[p.
 Global violations: ${selectedComment.globalViolations.length ? selectedComment.globalViolations.join(', ') : 'none'}`
       : '\nNo specific comment is focused. Answer about the full audit or whichever comment the user describes.'
 
-    return `You are the Syntropimaxx Vibe Audit Intelligence — an AI that specialises in HumaneBench v3.0 comment analysis for content creators.
+    return `You are the CCIP Vibe Audit Intelligence — an AI that specialises in HumaneBench v3.0 comment analysis for content creators.
 
 You have the FULL grading data for every comment via context. Use it to answer precisely.
 
@@ -180,14 +166,14 @@ Be concise and actionable. Always cite the specific principle that most impacted
 
   if (loading) {
     return (
-      <div className="rounded-2xl border border-white/[0.08] bg-[#1e2048] p-6">
+      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6">
         <div className="flex items-center gap-3 mb-5">
-          <div className="w-5 h-5 border-2 border-violet-400 border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm font-semibold text-slate-300">Grading with HumaneBench v3.0…</p>
+          <div className="w-5 h-5 border-2 border-violet-500 border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm font-semibold text-slate-700">Grading with HumaneBench v3.0…</p>
         </div>
         <div className="space-y-3">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-16 rounded-xl bg-white/[0.03] animate-pulse" style={{ animationDelay: `${i * 100}ms` }} />
+            <div key={i} className="h-16 rounded-xl bg-slate-100 animate-pulse" style={{ animationDelay: `${i * 100}ms` }} />
           ))}
         </div>
       </div>
@@ -195,7 +181,7 @@ Be concise and actionable. Always cite the specific principle that most impacted
   }
 
   if (commentsUnavailable) {
-    const noCommentSystemPrompt = `You are the Syntropimaxx Vibe Audit Intelligence. Comments are disabled or unavailable for this content, but the Vibe Blueprint was generated from the transcript/description.
+    const noCommentSystemPrompt = `You are the CCIP Vibe Audit Intelligence. Comments are disabled or unavailable for this content, but the Vibe Blueprint was generated from the transcript/description.
 
 You can help the creator by:
 • Explaining what kinds of comments typically score well under HumaneBench v3.0
@@ -211,16 +197,16 @@ Be concise and actionable.`
 
     return (
       <div className="flex flex-col gap-2">
-        <div className="rounded-2xl border border-white/[0.08] bg-[#1e2048] overflow-hidden">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
           <div className="p-6 flex flex-col items-center justify-center gap-3 min-h-[160px]">
             <span className="text-2xl">💬</span>
-            <p className="text-sm font-semibold text-slate-300">Comments unavailable</p>
+            <p className="text-sm font-semibold text-slate-700">Comments unavailable</p>
             <p className="text-[12px] text-slate-500 text-center max-w-[260px]">
               Comments are disabled or restricted on this video. The Vibe Blueprint was still generated from the transcript.
             </p>
             <button
               onClick={() => setIsAIOpen(v => !v)}
-              className="mt-1 text-[11px] px-3 py-1.5 rounded-full font-semibold border flex items-center gap-1.5 bg-violet-500/10 border-violet-500/20 text-violet-400 hover:bg-violet-500/20 transition-all"
+              className="mt-1 text-[11px] px-3 py-1.5 rounded-full font-semibold border flex items-center gap-1.5 bg-violet-50 border-violet-200 text-violet-700 hover:bg-violet-100 transition-all"
             >
               <span className="text-[10px]">✦</span>
               {isAIOpen ? 'Hide AI' : 'Ask Vibe AI — engagement strategies'}
@@ -229,10 +215,10 @@ Be concise and actionable.`
         </div>
 
         {isAIOpen && (
-          <div className="rounded-2xl border border-violet-500/20 bg-[#0f0f2e] flex flex-col">
-            <div className="flex items-center justify-between px-4 py-2.5 border-b border-violet-500/10">
-              <span className="text-[10px] text-violet-400 font-bold uppercase tracking-wider">✦ Vibe Audit AI — Engagement Strategy</span>
-              <button onClick={() => setIsAIOpen(false)} className="text-slate-600 hover:text-slate-400 text-sm">✕</button>
+          <div className="rounded-2xl border border-violet-200 bg-white shadow-sm flex flex-col">
+            <div className="flex items-center justify-between px-4 py-2.5 border-b border-violet-100">
+              <span className="text-[10px] text-violet-600 font-bold uppercase tracking-wider">✦ Vibe Audit AI — Engagement Strategy</span>
+              <button onClick={() => setIsAIOpen(false)} className="text-slate-400 hover:text-slate-600 text-sm">✕</button>
             </div>
             <div className="h-80">
               <CopilotChat
@@ -256,30 +242,30 @@ Be concise and actionable.`
 
   return (
     <div className="flex flex-col gap-2">
-    <div className="rounded-2xl border border-white/[0.08] bg-[#1e2048] overflow-hidden flex flex-col">
+    <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden flex flex-col">
       {/* Header */}
-      <div className="px-5 py-4 border-b border-white/[0.05]">
+      <div className="px-5 py-4 border-b border-slate-100">
         <div className="flex items-center justify-between mb-2">
           <div>
-            <h3 className="text-[13px] font-bold text-white">
+            <h3 className="text-[13px] font-bold text-slate-800">
               Vibe Audit
-              <span className="text-slate-500 font-normal ml-1.5">// Comment Grading Feed</span>
+              <span className="text-slate-400 font-normal ml-1.5">// Comment Grading Feed</span>
             </h3>
-            <p className="text-[11px] text-slate-600 mt-0.5">
+            <p className="text-[11px] text-slate-500 mt-0.5">
               8 HumaneBench principles · A–F scale ·{' '}
               <span className="text-violet-500">click any comment → AI analysis opens below</span>
             </p>
           </div>
           <div className="flex items-center gap-2 flex-wrap justify-end">
             {evaluatedInSandbox && (
-              <span className="text-[11px] text-sky-400 bg-sky-400/10 border border-sky-400/20 px-2.5 py-1 rounded-full font-medium flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-sky-400 inline-block" />
+              <span className="text-[11px] text-sky-700 bg-sky-50 border border-sky-200 px-2.5 py-1 rounded-full font-medium flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-sky-500 inline-block" />
                 Daytona sandbox
               </span>
             )}
             {source === 'live' && (
-              <span className="text-[11px] text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 px-2.5 py-1 rounded-full font-medium flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="text-[11px] text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full font-medium flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 Live
               </span>
             )}
@@ -287,8 +273,8 @@ Be concise and actionable.`
               onClick={() => setIsAIOpen(v => !v)}
               className={`text-[11px] px-3 py-1 rounded-full font-semibold transition-all border flex items-center gap-1.5 ${
                 isAIOpen
-                  ? 'bg-violet-500/20 border-violet-500/40 text-violet-300'
-                  : 'bg-violet-500/10 border-violet-500/20 text-violet-400 hover:bg-violet-500/20'
+                  ? 'bg-violet-100 border-violet-300 text-violet-700'
+                  : 'bg-violet-50 border-violet-200 text-violet-600 hover:bg-violet-100'
               }`}
             >
               <span className="text-[10px]">✦</span>
@@ -298,7 +284,7 @@ Be concise and actionable.`
         </div>
         {/* Dot legend */}
         <div className="flex items-center gap-4 flex-wrap">
-          <span className="text-[10px] text-slate-600 font-semibold uppercase tracking-wider">Dots =</span>
+          <span className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">Dots =</span>
           <span className="flex items-center gap-1.5 text-[11px] text-slate-500">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block" />Passed
           </span>
@@ -308,12 +294,12 @@ Be concise and actionable.`
           <span className="flex items-center gap-1.5 text-[11px] text-slate-500">
             <span className="w-2.5 h-2.5 rounded-full bg-red-400 inline-block" />Failed
           </span>
-          <span className="text-[10px] text-slate-700">Hover a dot for its principle</span>
+          <span className="text-[10px] text-slate-400">Hover a dot for its principle</span>
         </div>
       </div>
 
       {/* Comment rows */}
-      <div className="flex-1 divide-y divide-white/[0.04] overflow-auto max-h-[520px]">
+      <div className="flex-1 divide-y divide-slate-100 overflow-auto max-h-[520px]">
         {sorted.map((c, i) => {
           const style   = gradeStyle(c.grade)
           const letter  = c.grade.replace('+', '').replace('-', '')
@@ -325,12 +311,12 @@ Be concise and actionable.`
               key={i}
               onClick={() => handleCommentClick(i)}
               title="Click to focus this comment — AI panel opens below"
-              className={`flex items-start gap-3 px-4 py-3.5 border-l-[3px] ${style.row} hover:bg-white/[0.025] transition-colors cursor-pointer ${
-                isSelected ? 'bg-violet-500/10 ring-1 ring-inset ring-violet-500/30' : ''
+              className={`flex items-start gap-3 px-4 py-3.5 border-l-[3px] ${style.row} hover:bg-slate-50 transition-colors cursor-pointer ${
+                isSelected ? 'bg-violet-50 ring-1 ring-inset ring-violet-300' : ''
               }`}
             >
               <div className="flex-1 min-w-0">
-                <p className={`text-[13px] leading-snug ${isViolation ? 'text-slate-500 line-through' : 'text-slate-200'}`}>
+                <p className={`text-[13px] leading-snug ${isViolation ? 'text-slate-400 line-through' : 'text-slate-700'}`}>
                   &ldquo;{c.text}&rdquo;
                 </p>
                 <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">{c.feedback}</p>
@@ -348,14 +334,14 @@ Be concise and actionable.`
               </div>
 
               <div className="shrink-0 flex flex-col items-center gap-1 pt-0.5">
-                <span className={`text-[13px] font-black px-2.5 py-1 rounded-lg ${style.badge} min-w-[48px] text-center shadow-lg ${glow}`}>
+                <span className={`text-[13px] font-black px-2.5 py-1 rounded-lg ${style.badge} min-w-[48px] text-center shadow-md ${glow}`}>
                   {c.grade}
                 </span>
-                <span className="text-[10px] text-slate-700 font-mono">
+                <span className="text-[10px] text-slate-500 font-mono">
                   {c.score > 0 ? '+' : ''}{c.score.toFixed(2)}
                 </span>
                 {isSelected && (
-                  <span className="text-[9px] text-violet-400 font-bold">focused</span>
+                  <span className="text-[9px] text-violet-600 font-bold">focused</span>
                 )}
               </div>
             </div>
@@ -367,31 +353,31 @@ Be concise and actionable.`
 
     {/* AI chat panel — sibling of the overflow-hidden card, so input is never clipped */}
     {isAIOpen && (
-      <div className="rounded-2xl border border-violet-500/20 bg-[#0f0f2e] flex flex-col">
+      <div className="rounded-2xl border border-violet-200 bg-white shadow-sm flex flex-col">
         {/* AI panel header */}
-        <div className="flex items-center justify-between px-4 py-2.5 border-b border-violet-500/10">
+        <div className="flex items-center justify-between px-4 py-2.5 border-b border-violet-100">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] text-violet-400 font-bold uppercase tracking-wider">✦ Vibe Audit AI</span>
+            <span className="text-[10px] text-violet-600 font-bold uppercase tracking-wider">✦ Vibe Audit AI</span>
             {selectedComment ? (
-              <span className="text-[10px] text-slate-500 bg-white/5 px-2 py-0.5 rounded-full">
+              <span className="text-[10px] text-slate-600 bg-slate-100 px-2 py-0.5 rounded-full">
                 Focused: grade {selectedComment.grade} · score {selectedComment.score > 0 ? '+' : ''}{selectedComment.score.toFixed(2)}
               </span>
             ) : (
-              <span className="text-[10px] text-slate-600">Full audit context loaded · {comments.length} comments</span>
+              <span className="text-[10px] text-slate-400">Full audit context loaded · {comments.length} comments</span>
             )}
           </div>
           <div className="flex items-center gap-3">
             {selectedComment && (
               <button
                 onClick={() => setSelectedIdx(null)}
-                className="text-[10px] text-slate-600 hover:text-slate-400 transition-colors"
+                className="text-[10px] text-slate-400 hover:text-slate-600 transition-colors"
               >
                 Clear focus
               </button>
             )}
             <button
               onClick={() => setIsAIOpen(false)}
-              className="text-slate-600 hover:text-slate-400 text-sm transition-colors"
+              className="text-slate-400 hover:text-slate-600 text-sm transition-colors"
             >
               ✕
             </button>

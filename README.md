@@ -1,8 +1,8 @@
-# Syntropimaxx
+# CCIP — Content Creators Intelligence Platform
 
-**Creator Vibe Intelligence — grade your community comments A–F with HumaneBench v3.0**
+**Grade your community comments A–F with HumaneBench v3.0 — powered by a multi-agent LangGraph pipeline**
 
-Built for the **Applied Intelligence Hackathon 2026**.
+Built for the **Applied Intelligence Hackathon 2026** · WandB Inference · Redis VL · CopilotKit
 
 ---
 
@@ -14,21 +14,31 @@ Built for the **Applied Intelligence Hackathon 2026**.
 
 ## What it does
 
-Content creators get flooded with comments — most of it noise. Syntropimaxx evaluates every comment against the **HumaneBench v3.0** framework (8 humane-design principles) and maps each one to a letter grade from **A+ to F**, with actionable per-comment feedback.
+Content creators get flooded with comments — most of it noise. CCIP evaluates every comment against the **HumaneBench v3.0** framework (8 humane-design principles) and maps each one to a letter grade from **A+ to F**, with actionable per-comment feedback and a community analytics dashboard.
 
 The creator workflow:
 
-1. **Paste a YouTube video or X/Twitter post URL** — or pick a demo
-2. **Vibe Blueprint generated** — LLM reads the transcript/thread and extracts the creator's emotional state, true intent, interaction boundaries, and contextual prompt chips
-3. **Every comment graded A–F** — scored across 8 HumaneBench principles in parallel; violations flagged, strengths reinforced
-4. **Per-comment feedback** — what went well, how to push a B up to an A, why an F actively harms community quality
-5. **Community analytics** — True Audience Sentiment %, tier depth (median grade), High-Signal Ratio %, full grade distribution bar
+1. **Paste a YouTube video or X/Twitter post URL**
+2. **Multi-agent pipeline runs** — LangGraph supervisor orchestrates 4 specialist agents in sequence
+3. **Vibe Blueprint generated** — LLM reads the transcript and extracts the creator's emotional state, true intent, interaction boundaries, and contextual prompt chips
+4. **Comments indexed** — embeddings stored in Redis VL for RAG-powered analysis
+5. **Every comment graded A–F** — scored across all 8 HumaneBench principles; violations flagged, strengths reinforced
+6. **Vibe Audit AI** — ask questions about grade distribution, why a comment got its score, how to improve it, and what value it adds for the creator
 
 ---
 
 ## HumaneBench v3.0 — The 8 Principles
 
-Each comment is scored +1.0 / +0.5 / 0 / −0.5 / −1.0 on all 8 axes. The average maps to the A–F grade.
+Each comment is scored +1.0 / +0.5 / −0.5 / −1.0 on all 8 axes. The average maps to the A–F grade.
+
+| Grade | Score range |
+|-------|------------|
+| A+    | ≥ 0.875    |
+| A     | ≥ 0.625    |
+| B     | ≥ 0.375    |
+| C     | ≥ 0.125    |
+| D     | ≥ −0.125   |
+| F     | below −0.125 |
 
 | # | Principle | What it measures |
 |---|-----------|-----------------|
@@ -36,10 +46,10 @@ Each comment is scored +1.0 / +0.5 / 0 / −0.5 / −1.0 on all 8 axes. The aver
 | 2 | **Meaningful Choices** | Does it support creator autonomy, or pressure them toward a specific decision? |
 | 3 | **Enhance Capabilities** | Does it help the creator grow their skills, knowledge, or creative practice? |
 | 4 | **Dignity & Safety** | Does it protect the creator's dignity and emotional safety? |
-| 5 | **Healthy Relationships** | Does it foster healthy parasocial boundaries, or create unhealthy attachment? |
+| 5 | **Healthy Relationships** | Does it foster healthy parasocial bonds, or create unhealthy attachment? |
 | 6 | **Long-term Wellbeing** | Does it support sustainable creator mental health, not just short-term engagement? |
-| 7 | **Transparency & Honesty** | Is the engagement genuine and transparent, not flattery or manipulation? |
-| 8 | **Equity & Inclusion** | Is the comment inclusive and equitable, free from marginalizing language? |
+| 7 | **Transparency & Honesty** | Is the engagement genuine, not flattery or manipulation? |
+| 8 | **Equity & Inclusion** | Is the comment inclusive and free from marginalizing language? |
 
 ---
 
@@ -48,18 +58,16 @@ Each comment is scored +1.0 / +0.5 / 0 / −0.5 / −1.0 on all 8 axes. The aver
 | Layer | Technology | Role |
 |-------|-----------|------|
 | **Frontend** | Next.js 16.2.6 (App Router, Turbopack) | React server + client components |
-| **Styling** | Tailwind CSS v4 | Utility-first dark UI with glassmorphism |
-| **Language** | TypeScript | Full-stack type safety |
-| **LLM — Blueprint** | WandB Inference · `meta-llama/Llama-3.1-70B-Instruct` | Vibe Blueprint generation from transcripts |
-| **LLM — Judge** | WandB Inference · `meta-llama/Llama-3.1-70B-Instruct` | HumaneBench principle scoring per comment |
-| **Evaluation framework** | HumaneBench v3.0 | 8-principle rubric adapted for fan comments |
+| **Styling** | Tailwind CSS v4 | Utility-first dark UI |
+| **Language** | TypeScript + Python | Full-stack type safety |
+| **Agentic AI chat** | CopilotKit 1.59.5 | Vibe Audit AI — chat over graded comments |
+| **LLM (all agents)** | WandB Inference · `OpenPipe/Qwen3-14B-Instruct` | Blueprint generation + HumaneBench grading |
+| **Multi-agent orchestration** | LangGraph (Python) | Supervisor orchestrates 4 specialist agents |
 | **Content scraping** | Apify | YouTube video + comments; X/Twitter thread + replies |
-| **Web scraping (alt)** | rtrvr.ai | General URL scraping and X thread agent |
-| **Object storage** | Tigris (S3-compatible) | Transcript and primary content storage |
-| **Database / BaaS** | InsForge | Postgres-backed content items, comments, blueprints |
-| **Deployment** | Vercel via InsForge CLI | Production hosting |
-| **Sandbox runtime** | Daytona | Isolated, ephemeral containers for HumaneBench evaluation |
-| **Dev environments** | Daytona | One-command reproducible contributor workspaces |
+| **Vector store** | Redis VL | Comment embeddings + RAG-powered analysis |
+| **Evaluation framework** | HumaneBench v3.0 | 8-principle rubric for fan comments |
+| **Observability** | WandB Weave | LLM traces for blueprint + grading agents |
+| **Backend API** | FastAPI + uvicorn | SSE streaming pipeline endpoint |
 
 ---
 
@@ -69,34 +77,39 @@ Each comment is scored +1.0 / +0.5 / 0 / −0.5 / −1.0 on all 8 axes. The aver
 Creator pastes URL
        │
        ▼
-  Apify Actor
-  (YouTube / X)
+  LangGraph Supervisor
        │
-  ┌────┴────────────────────┐
-  │  NormalizedContent      │
-  │  - primaryText          │
-  │  - rawComments[]        │
-  └────┬────────────────────┘
+       ├─► ScraperAgent
+       │     └─ Apify Actor (YouTube / X)
+       │         scrapes transcript + up to 50 comments
        │
-       ├─► Tigris  (store transcript)
+       ├─► BlueprintAgent
+       │     └─ WandB LLM (Qwen3-14B)
+       │         generates Vibe Blueprint:
+       │         vibe_state, true_intent,
+       │         interaction_boundaries, contextual_prompts
        │
-       ├─► Nebius Llama-3.3-70B  (generate Vibe Blueprint)
-       │     └─ vibe_state, true_intent,
-       │        interaction_boundaries, contextual_prompts
+       ├─► IndexerAgent
+       │     └─ Redis VL
+       │         embeds + indexes all raw comments
+       │         for RAG-powered Vibe Audit AI
        │
-       ├─► InsForge DB  (persist content_item + blueprint)
-       │
-       └─► Daytona Sandbox  (ephemeral isolated container)
-             │
-             └─► Nebius Qwen3-32B  (grade each comment in parallel)
-                   └─ 8 principle scores → avg → A–F grade + feedback
-                            │
-                            ▼
-                   Daytona Sandbox destroyed ◄── fire-and-forget cleanup
-                            │
-                            ▼
-               CommentGradingFeed + VibeReport  (creator dashboard)
-               + "Daytona sandbox" badge shown when evaluated in isolation
+       └─► GraderAgent × N (parallel)
+             └─ WandB LLM (Qwen3-14B) + RAG
+                 scores each comment on all 8 principles
+                 → avg score → A+ / A / B / C / D / F
+                 → per-principle rationale + globalViolations
+
+                          │
+                          ▼
+          ┌───────────────────────────────┐
+          │  Creator Dashboard (Next.js)  │
+          │  • Vibe Blueprint Card        │
+          │  • Comment Grading Feed       │
+          │  • Contextual Prompt Chips    │
+          │  • Vibe Report (analytics)    │
+          │  • Vibe Audit AI (CopilotKit) │
+          └───────────────────────────────┘
 ```
 
 ---
@@ -105,124 +118,77 @@ Creator pastes URL
 
 ```
 app/
-  page.tsx                  # Main creator UI
-  api/
-    audit/route.ts          # Core pipeline: scrape → blueprint → grade
-    blueprint/route.ts      # Demo blueprint loader
-    evaluate/route.ts       # Single-comment evaluation endpoint
-    ingest/route.ts         # URL ingestion
+  page.tsx                        # Main creator UI — pipeline + results
+  layout.tsx                      # CopilotKit provider
+  api/copilotkit/
+    _handler.ts                   # CopilotRuntime + OpenAIAdapter → WandB
+    route.ts / [...path]/route.ts # CopilotKit endpoint routing
 
-lib/
-  daytona.ts                # Sandbox lifecycle + self-contained eval runner
-  evaluator.ts              # HumaneBench v3.0 prompt + Qwen3-32B judge
-  grader.ts                 # A–F mapping, feedback generation, analytics
-  apify.ts                  # YouTube + X scraping with rawComments
-  nebius.ts                 # Vibe Blueprint generation (Llama-3.3-70B)
-  tigris.ts                 # S3-compatible object storage client
-  insforge.ts               # InsForge SDK wrapper + type definitions
-  rtrvr.ts                  # rtrvr.ai scraping integration
+backend/
+  main.py                         # FastAPI app — /run-stream SSE endpoint
+  graph/
+    supervisor.py                 # LangGraph supervisor graph
+  specialists/
+    scraper.py                    # ScraperAgent — Apify
+    blueprint.py                  # BlueprintAgent — WandB LLM
+    indexer.py                    # IndexerAgent — Redis VL
+    grader.py                     # GraderAgent — WandB LLM + HumaneBench v3.0
+  redis_store/
+    store.py                      # Redis VL client + embedding helpers
+    kb_seed.py                    # Seed HumaneBench knowledge base
 
 components/
-  VibeBlueprintCard.tsx     # Creator's content profile card
-  CommentGradingFeed.tsx    # A–F graded comment list
-  VibeReport.tsx            # Aggregate analytics dashboard
+  VibeBlueprintCard.tsx           # Creator content profile + Blueprint AI chat
+  CommentGradingFeed.tsx          # A–F graded comment list + Vibe Audit AI chat
+  VibeReport.tsx                  # Aggregate analytics dashboard
+
+lib/
+  insforge.ts                     # VibeBlueprint type definitions
+  grader.ts                       # A–F mapping + grade style helpers
 ```
-
----
-
-## Daytona Integration
-
-Daytona plays two distinct roles in this project.
-
----
-
-### Role 1 — Evaluation Runtime (the core use case)
-
-Every HumaneBench audit runs inside an **ephemeral Daytona sandbox**. When a creator pastes a URL, `lib/daytona.ts` does:
-
-```
-createSandbox()
-  → write /tmp/input.json  (comments + blueprint + Nebius credentials)
-  → write /tmp/eval.mjs    (self-contained HumaneBench eval script)
-  → node /tmp/eval.mjs     (grades all comments in parallel, ~2s)
-  → destroySandbox()       (fire-and-forget cleanup)
-```
-
-**Why this matters:**
-- **Isolation** — each audit runs in a clean container; no cross-contamination between requests
-- **Reproducibility** — the eval environment is identical every time (Node 25, built-in `fetch`, no npm installs)
-- **Security** — LLM API keys are injected into the sandbox at runtime, never logged or shared across calls
-- **Portability** — the eval script (`EVAL_SCRIPT` in `lib/daytona.ts`) is self-contained: the full HumaneBench rubric, validation logic, and Nebius calls are inlined as a single Node ESM module
-
-When `DAYTONA_API_KEY` is set, the UI shows a sky-blue **"Daytona sandbox"** badge on the Comment Grading Feed to indicate that the evaluation ran in isolation.
-
-If `DAYTONA_API_KEY` is absent or the sandbox call fails, the system automatically falls back to direct in-process evaluation — no degraded experience for the creator.
-
-**Key file:** `lib/daytona.ts` — sandbox create/exec/destroy + `evaluateInSandbox()` export
-
----
-
-### Role 2 — One-Click Dev Environment
-
-Daytona also spins up a fully configured contributor workspace in one command:
-
-```bash
-daytona create https://github.com/abhijitbetigeri/Syntropimaxx
-```
-
-Daytona reads `.devcontainer/devcontainer.json` and:
-- Provisions a Node 20 container
-- Runs `npm install` automatically
-- Starts `npm run dev` on container start
-- Forwards port 3000 and opens it in the browser
-- Installs Tailwind CSS IntelliSense, ESLint, Prettier, and TypeScript extensions
-
-> **Env vars**: set the variables listed below in your local shell before running `daytona create` — they're forwarded into the container via `remoteEnv`.
 
 ---
 
 ## Local Development
 
+### 1. Frontend (Next.js)
+
 ```bash
-# 1. Clone
 git clone https://github.com/abhijitbetigeri/Syntropimaxx.git
 cd Syntropimaxx
-
-# 2. Install
 npm install
-
-# 3. Set environment variables
-cp .env.local.example .env.local
-# Fill in: INSFORGE_URL, INSFORGE_API_KEY, NEBIUS_API_KEY,
-#          TIGRIS_*, APIFY_TOKEN
-
-# 4. Run dev server
+cp .env.local.example .env.local   # fill in env vars (see below)
 npm run dev
+```
+
+### 2. Backend (FastAPI)
+
+```bash
+cd backend
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn main:app --port 8000 --reload
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
 
 ### Environment Variables
 
-| Variable | Description |
-|----------|-------------|
-| `INSFORGE_URL` | InsForge project API base URL |
-| `INSFORGE_API_KEY` | InsForge admin API key (server-only) |
-| `WANDB_API_KEY` | WandB API key — get from [wandb.ai/authorize](https://wandb.ai/authorize) |
-| `WANDB_LLM_MODEL` | Blueprint generation model (default: `meta-llama/Llama-3.1-70B-Instruct`) |
-| `WANDB_JUDGE_MODEL` | HumaneBench judge model (default: `meta-llama/Llama-3.1-70B-Instruct`) |
-| `TIGRIS_ENDPOINT` | Tigris S3 endpoint |
-| `TIGRIS_ACCESS_KEY_ID` | Tigris access key |
-| `TIGRIS_SECRET_ACCESS_KEY` | Tigris secret key |
-| `TIGRIS_BUCKET_NAME` | Tigris bucket name |
-| `APIFY_TOKEN` | Apify API token |
-| `MAX_COMMENTS` | Max comments to fetch and grade per video/post (default: `50`) |
-| `DAYTONA_API_KEY` | Daytona API key — enables sandbox evaluation runtime (optional; falls back to direct eval if absent) |
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `WANDB_API_KEY` | ✅ | WandB API key — [wandb.ai/authorize](https://wandb.ai/authorize) |
+| `WANDB_LLM_MODEL` | | Blueprint + grading model (default: `OpenPipe/Qwen3-14B-Instruct`) |
+| `WANDB_JUDGE_MODEL` | | Judge model (default: `OpenPipe/Qwen3-14B-Instruct`) |
+| `WANDB_ENTITY` | | WandB entity/org (default: `abhijitbetigeri29-hackathon26`) |
+| `WANDB_PROJECT` | | WandB project name (default: `inference`) |
+| `APIFY_TOKEN` | ✅ | Apify API token — for scraping YouTube/X |
+| `REDIS_URL` | ✅ | Redis connection URL (with RedisVL) |
+| `MAX_COMMENTS` | | Max comments to grade per run (default: `50`) |
 
 ---
 
 ## Hackathon
 
-Built for the **Applied Intelligence Hackathon 2026** — using AI to foster human flourishing in content creation community.
+Built for the **Applied Intelligence Hackathon 2026** — using multi-agent AI to help content creators understand and grow their community.
 
-> _"Syntropimaxx — Social optimization sandboxes for human flourishing"_
+> _"CCIP — Content Creators Intelligence Platform: grade your community, build a better one."_

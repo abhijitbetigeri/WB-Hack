@@ -44,6 +44,7 @@ async def _scrape_youtube(url: str) -> dict:
 
         # 2. Comments (separate actor)
         raw_comments: list[str] = []
+        comments_fetch_failed = False
         if not comments_off:
             try:
                 rc = await client.post(
@@ -53,15 +54,24 @@ async def _scrape_youtube(url: str) -> dict:
                         "maxComments": MAX_COMMENTS,
                         "sortCommentsBy": "TOP_COMMENTS",
                     },
-                    timeout=35,
+                    timeout=60,
                 )
-                for c in rc.json():
-                    text = (c.get("comment") or c.get("text") or c.get("textDisplay") or "").strip()
-                    if text:
-                        raw_comments.append(text)
+                data = rc.json()
+                if isinstance(data, list):
+                    for c in data:
+                        text = (
+                            c.get("text")
+                            or c.get("textDisplay")
+                            or c.get("comment")
+                            or c.get("commentText")
+                            or ""
+                        ).strip()
+                        if text:
+                            raw_comments.append(text)
                 raw_comments = raw_comments[:MAX_COMMENTS]
-            except Exception:
-                pass
+            except Exception as e:
+                print(f"⚠️  Comment fetch failed: {e}")
+                comments_fetch_failed = True
 
         # 3. Subtitles
         subs = item.get("subtitles", "")
@@ -88,7 +98,7 @@ async def _scrape_youtube(url: str) -> dict:
             "creator_handle": f"@{channel.replace(' ', '').lower()}",
             "primary_text": primary_text,
             "raw_comments": raw_comments,
-            "comments_unavailable": comments_off or len(raw_comments) == 0,
+            "comments_unavailable": comments_off,
         }
 
 
