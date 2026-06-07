@@ -2,7 +2,7 @@
 import type { AuditAnalytics } from '@/lib/grader'
 import { gradeStyle } from '@/lib/grader'
 
-const GRADE_ORDER = ['A+', 'A', 'B+', 'B', 'C+', 'C', 'C-', 'D', 'F']
+const GRADE_ORDER = ['A+', 'A', 'B', 'C', 'D', 'F']
 
 interface Props {
   analytics: AuditAnalytics
@@ -29,7 +29,7 @@ function Stat({
 }
 
 export default function VibeReport({ analytics, creatorHandle }: Props) {
-  const { communityAlignmentPct, tierDepth, depthVectorPct, gradeDistribution, totalGraded } = analytics
+  const { communityAlignmentPct, tierDepth, depthVectorPct, gradeDistribution, totalGraded, avgScore } = analytics
 
   const alignmentLabel =
     communityAlignmentPct >= 75 ? 'Positive Growth Signal' :
@@ -42,6 +42,14 @@ export default function VibeReport({ analytics, creatorHandle }: Props) {
   const alignmentTrend =
     communityAlignmentPct >= 75 ? '↑ Healthy' :
     communityAlignmentPct >= 50 ? '→ Neutral' : '↓ Risk'
+
+  const avgScoreNum = typeof avgScore === 'number' ? avgScore : 0
+  const avgScoreDisplay = `${avgScoreNum >= 0 ? '+' : ''}${avgScoreNum.toFixed(3)}`
+  const avgScoreLabel =
+    avgScoreNum >= 0.625 ? 'Excellent community quality' :
+    avgScoreNum >= 0.375 ? 'Good community quality' :
+    avgScoreNum >= 0.125 ? 'Average community quality' :
+    avgScoreNum >= -0.125 ? 'Below-average quality' : 'Low community quality'
 
   return (
     <div className="rounded-2xl border border-white/[0.08] bg-[#1e2048] overflow-hidden">
@@ -61,7 +69,13 @@ export default function VibeReport({ analytics, creatorHandle }: Props) {
 
       <div className="p-6 space-y-6">
         {/* Stat cards */}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <Stat
+            label="Avg HumaneBench Score"
+            value={avgScoreDisplay}
+            sub={avgScoreLabel}
+            accent="border-white/[0.10] bg-white/[0.05]"
+          />
           <Stat
             label="True Audience Sentiment"
             value={`${communityAlignmentPct}%`}

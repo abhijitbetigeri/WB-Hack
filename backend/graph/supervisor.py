@@ -1,58 +1,56 @@
 from typing import TypedDict, Optional
 from langgraph.graph import StateGraph, END
-from agents.scraper import scrape
-from agents.blueprint import generate_blueprint
-from agents.indexer import index_and_store, apply_grades
-from agents.grader import grade_all
+
+from specialists.scraper import scrape
+from specialists.blueprint import generate_blueprint
+from specialists.indexer import index_and_store, apply_grades
+from specialists.grader import grade_all
 from redis_store.store import store_audit_result
 
 
 class AuditState(TypedDict):
-    # Input
     url: str
-    # Stage tracking (streamed to CopilotKit frontend)
     stage: str
     progress: str
-    # Scraped
     platform: Optional[str]
     title: Optional[str]
     creator_handle: Optional[str]
     primary_text: Optional[str]
     raw_comments: list
     comments_unavailable: bool
-    # Generated
     blueprint: Optional[dict]
     comment_ids: list
     graded_comments: list
     analytics: Optional[dict]
-    # Error
     error: Optional[str]
 
 
 def _compute_analytics(graded: list[dict]) -> dict:
-    if not graded:
-        return {"totalComments": 0, "gradeDistribution": {}, "averageScore": 0,
-                "highSignalRatio": 0, "trueAudienceSentiment": 0, "medianGrade": "N/A"}
     scores = [g["score"] for g in graded]
-    grades = [g["grade"] for g in graded]
+    n = len(scores)
+    if n == 0:
+        return {
+            "totalGraded": 0, "gradeDistribution": {},
+            "avgScore": 0, "communityAlignmentPct": 50,
+            "tierDepth": "N/A", "depthVectorPct": 0,
+        }
     dist: dict = {}
-    for g in grades:
-        dist[g] = dist.get(g, 0) + 1
-    avg = sum(scores) / len(scores)
-    high_signal = sum(1 for s in scores if s >= 0.5) / len(scores)
-    positive = sum(1 for s in scores if s >= 0) / len(scores)
-    sorted_scores = sorted(scores)
-    mid = len(sorted_scores) // 2
-    median_score = sorted_scores[mid]
-    GRADE_MAP = [("A+", 0.875), ("A", 0.625), ("B", 0.375), ("C", 0.125), ("D", -0.125), ("F", -999)]
-    median_grade = next(g for g, t in GRADE_MAP if median_score >= t)
+    for g in graded:
+        dist[g["grade"]] = dist.get(g["grade"], 0) + 1
+    avg = sum(scores) / n
+    GRADE_MAP = [("A+", 0.875), ("A", 0.625), ("B", 0.375),
+                 ("C", 0.125), ("D", -0.125), ("F", -999)]
+    median_score = sorted(scores)[n // 2]
+    tier_depth = next(gr for gr, t in GRADE_MAP if median_score >= t)
+    community_pct = round(((avg + 1) / 2) * 100)
+    depth_pct = round(sum(1 for s in scores if s >= 0.5) / n * 100)
     return {
-        "totalComments": len(graded),
+        "totalGraded": n,
         "gradeDistribution": dist,
-        "averageScore": round(avg, 3),
-        "highSignalRatio": round(high_signal, 3),
-        "trueAudienceSentiment": round(positive, 3),
-        "medianGrade": median_grade,
+        "avgScore": round(avg, 3),
+        "communityAlignmentPct": community_pct,
+        "tierDepth": tier_depth,
+        "depthVectorPct": depth_pct,
     }
 
 
@@ -79,10 +77,10 @@ async def blueprint_node(state: AuditState) -> dict:
     if state.get("stage") == "error":
         return {}
     try:
-        blueprint = await generate_blueprint(state["primary_text"] or "")
+        blueprint = await generate_blueprint(state.get("primary_text") or "")
         return {
             "stage": "indexing",
-            "progress": f"Vibe Blueprint generated — emotional context: {blueprint['vibe_state']['emotional_context']}",
+            "progress": f"BlueprintAgent — {blueprint['vibe_state']['emotional_context']} · {blueprint['vibe_state']['description'][:80]}",
             "blueprint": blueprint,
         }
     except Exception as e:
@@ -94,12 +92,12 @@ async def index_node(state: AuditState) -> dict:
         return {}
     comments = state.get("raw_comments", [])
     if not comments:
-        return {"stage": "grading", "progress": "No comments to index — skipping.", "comment_ids": []}
+        return {"stage": "grading", "progress": "No comments to index.", "comment_ids": []}
     try:
         ids = await index_and_store(state["url"], state.get("platform", "youtube"), comments)
         return {
             "stage": "grading",
-            "progress": f"Indexed {len(ids)} comments in Redis VL (semantic search ready)",
+            "progress": f"IndexerAgent — {len(ids)} comments embedded in Redis VL (HNSW ready)",
             "comment_ids": ids,
         }
     except Exception as e:
@@ -112,13 +110,11 @@ async def grade_node(state: AuditState) -> dict:
     comments = state.get("raw_comments", [])
     blueprint = state.get("blueprint")
     if not comments or not blueprint:
-        analytics = _compute_analytics([])
-        return {"stage": "done", "progress": "Done — comments unavailable.", "graded_comments": [], "analytics": analytics}
+        return {"stage": "done", "progress": "Done — comments unavailable.", "graded_comments": [], "analytics": _compute_analytics([])}
     try:
         graded = await grade_all(comments, blueprint)
         apply_grades(state.get("comment_ids", []), graded)
         analytics = _compute_analytics(graded)
-        # Persist full result to Redis
         store_audit_result(state["url"], {
             "url": state["url"],
             "platform": state.get("platform"),
@@ -130,7 +126,7 @@ async def grade_node(state: AuditState) -> dict:
         })
         return {
             "stage": "done",
-            "progress": f"Graded {len(graded)} comments — avg score {analytics['averageScore']:.2f}",
+            "progress": f"GraderAgent × {len(graded)} — avg score {analytics['avgScore']:.2f}",
             "graded_comments": graded,
             "analytics": analytics,
         }
@@ -161,9 +157,9 @@ def build_graph():
     g.add_node("grade", grade_node)
 
     g.set_entry_point("scrape")
-    g.add_conditional_edges("scrape", route, {"blueprint": "blueprint", END: END})
-    g.add_conditional_edges("blueprint", route, {"index": "index", END: END})
-    g.add_conditional_edges("index", route, {"grade": "grade", END: END})
+    g.add_conditional_edges("scrape",    route, {"blueprint": "blueprint", END: END})
+    g.add_conditional_edges("blueprint", route, {"index": "index",         END: END})
+    g.add_conditional_edges("index",     route, {"grade": "grade",         END: END})
     g.add_edge("grade", END)
 
     return g.compile()

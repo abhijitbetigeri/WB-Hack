@@ -16,7 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-scene">
-        <CopilotKit runtimeUrl={process.env.NEXT_PUBLIC_COPILOTKIT_URL ?? "http://localhost:8000/copilotkit"}>
+        <CopilotKit runtimeUrl="/api/copilotkit">
           {children}
         </CopilotKit>
       </body>

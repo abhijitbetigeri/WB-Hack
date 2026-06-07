@@ -1,4 +1,7 @@
 'use client'
+import { useState } from 'react'
+import { useCopilotReadable } from '@copilotkit/react-core'
+import { CopilotChat } from '@copilotkit/react-ui'
 import type { VibeBlueprint } from '@/lib/insforge'
 
 const PRINCIPLE_LABELS: Record<string, string> = {
@@ -38,54 +41,108 @@ function Section({ label, principle, children }: { label: string; principle?: st
 }
 
 export default function VibeBlueprintCard({ blueprint, creatorHandle, platform }: Props) {
-  const emotion = EMOTIONAL_COLORS[blueprint.vibe_state.emotional_context] ?? EMOTIONAL_COLORS.technical
+  const [chatOpen, setChatOpen] = useState(false)
+  const emotion = EMOTIONAL_COLORS[blueprint.vibe_state?.emotional_context] ?? EMOTIONAL_COLORS.technical
+
+  useCopilotReadable({
+    description: `Vibe Blueprint for ${creatorHandle} — HumaneBench content analysis`,
+    value: {
+      creatorHandle,
+      platform,
+      vibeState: blueprint.vibe_state,
+      trueIntent: blueprint.true_intent,
+      interactionBoundaries: blueprint.interaction_boundaries,
+      contextualPrompts: blueprint.contextual_prompts,
+    },
+  })
 
   return (
-    <div className="rounded-2xl border border-white/[0.08] bg-[#1e2048] overflow-hidden flex flex-col">
-      {/* Gradient header */}
-      <div className="relative px-5 py-5 bg-gradient-to-br from-violet-600 via-indigo-600 to-purple-700 overflow-hidden">
-        <div className="absolute inset-0 opacity-20"
-          style={{ backgroundImage: 'radial-gradient(circle at 70% 30%, white 0%, transparent 60%)' }} />
-        <div className="relative flex items-start justify-between">
-          <div>
-            <p className="text-[10px] font-bold text-violet-200 uppercase tracking-widest mb-1">Vibe Blueprint</p>
-            <h2 className="text-lg font-black text-white">{creatorHandle}</h2>
-            <p className="text-xs text-violet-300 mt-0.5">HumaneBench content analysis</p>
+    <div className="flex flex-col gap-2">
+      {/* Main card — overflow-hidden safe because chat panel is a sibling */}
+      <div className="rounded-2xl border border-white/[0.08] bg-[#1e2048] overflow-hidden flex flex-col">
+        {/* Gradient header */}
+        <div className="relative px-5 py-5 bg-gradient-to-br from-violet-600 via-indigo-600 to-purple-700 overflow-hidden">
+          <div className="absolute inset-0 opacity-20"
+            style={{ backgroundImage: 'radial-gradient(circle at 70% 30%, white 0%, transparent 60%)' }} />
+          <div className="relative flex items-start justify-between">
+            <div>
+              <p className="text-[10px] font-bold text-violet-200 uppercase tracking-widest mb-1">Vibe Blueprint</p>
+              <h2 className="text-lg font-black text-white">{creatorHandle}</h2>
+              <p className="text-xs text-violet-300 mt-0.5">HumaneBench content analysis</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setChatOpen(o => !o)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all border ${
+                  chatOpen
+                    ? 'bg-white/20 border-white/30 text-white'
+                    : 'bg-white/10 border-white/20 text-violet-200 hover:bg-white/20'
+                }`}
+              >
+                <span>{chatOpen ? '✕' : '✦'}</span>
+                {chatOpen ? 'Close' : 'Ask AI'}
+              </button>
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg font-bold text-white ${platform === 'youtube' ? 'bg-red-500/80' : 'bg-black/60'}`}>
+                {platform === 'youtube' ? '▶' : '𝕏'}
+              </div>
+            </div>
           </div>
-          <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg font-bold text-white ${platform === 'youtube' ? 'bg-red-500/80' : 'bg-black/60'}`}>
-            {platform === 'youtube' ? '▶' : '𝕏'}
-          </div>
+        </div>
+
+        {/* Sections */}
+        <div className="flex-1 divide-y-0">
+          <Section label="Vibe State" principle={PRINCIPLE_LABELS[blueprint.vibe_state.humanebench_principle]}>
+            <div className="flex items-center gap-2">
+              <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${emotion.bg} ${emotion.text}`}>
+                <span className={`w-1.5 h-1.5 rounded-full ${emotion.dot}`} />
+                {blueprint.vibe_state.emotional_context}
+              </span>
+              <p className="text-sm text-slate-400 leading-snug">{blueprint.vibe_state.description}</p>
+            </div>
+          </Section>
+
+          <Section label="True Intent" principle={PRINCIPLE_LABELS[blueprint.true_intent.humanebench_principle]}>
+            <p className="text-sm font-semibold text-slate-200 capitalize mb-0.5">{blueprint.true_intent.community_need}</p>
+            <p className="text-xs text-slate-500 leading-relaxed">{blueprint.true_intent.description}</p>
+          </Section>
+
+          <Section label="Interaction Boundaries" principle={PRINCIPLE_LABELS[blueprint.interaction_boundaries.humanebench_principle]}>
+            <div className="flex flex-wrap gap-1.5">
+              {blueprint.interaction_boundaries.avoid.map((item) => (
+                <span key={item} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 text-xs">
+                  ✕ {item}
+                </span>
+              ))}
+            </div>
+          </Section>
         </div>
       </div>
 
-      {/* Sections */}
-      <div className="flex-1 divide-y-0">
-        <Section label="Vibe State" principle={PRINCIPLE_LABELS[blueprint.vibe_state.humanebench_principle]}>
-          <div className="flex items-center gap-2">
-            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${emotion.bg} ${emotion.text}`}>
-              <span className={`w-1.5 h-1.5 rounded-full ${emotion.dot}`} />
-              {blueprint.vibe_state.emotional_context}
-            </span>
-            <p className="text-sm text-slate-400 leading-snug">{blueprint.vibe_state.description}</p>
+      {/* AI chat panel — sibling of overflow-hidden card so input is never clipped */}
+      {chatOpen && (
+        <div className="rounded-2xl border border-violet-500/20 bg-[#0f0f2e] flex flex-col">
+          <div className="flex items-center justify-between px-4 py-2.5 border-b border-violet-500/10">
+            <span className="text-[10px] text-violet-400 font-bold uppercase tracking-wider">✦ Blueprint AI — {creatorHandle}</span>
+            <button onClick={() => setChatOpen(false)} className="text-slate-600 hover:text-slate-400 text-sm transition-colors">✕</button>
           </div>
-        </Section>
-
-        <Section label="True Intent" principle={PRINCIPLE_LABELS[blueprint.true_intent.humanebench_principle]}>
-          <p className="text-sm font-semibold text-slate-200 capitalize mb-0.5">{blueprint.true_intent.community_need}</p>
-          <p className="text-xs text-slate-500 leading-relaxed">{blueprint.true_intent.description}</p>
-        </Section>
-
-        <Section label="Interaction Boundaries" principle={PRINCIPLE_LABELS[blueprint.interaction_boundaries.humanebench_principle]}>
-          <div className="flex flex-wrap gap-1.5">
-            {blueprint.interaction_boundaries.avoid.map((item) => (
-              <span key={item} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 text-xs">
-                ✕ {item}
-              </span>
-            ))}
+          <div className="h-80">
+            <CopilotChat
+              instructions={`You are the Syntropimaxx Blueprint AI. You have access to the Vibe Blueprint for ${creatorHandle}.
+The creator's emotional context is "${blueprint.vibe_state.emotional_context}": ${blueprint.vibe_state.description}
+Their true intent is "${blueprint.true_intent.community_need}": ${blueprint.true_intent.description}
+Interaction boundaries to avoid: ${blueprint.interaction_boundaries.avoid.join(', ')}.
+Contextual prompt chips for fans: ${blueprint.contextual_prompts?.prompt_chips?.join(', ') ?? 'none'}.
+HumaneBench v3.0 principles guide this analysis — respect_attention, meaningful_choices, enhance_capabilities, dignity_safety, healthy_relationships, longterm_wellbeing, transparency_honesty, equity_inclusion.
+Answer concisely about the blueprint, what it means for fans, how to engage well with this creator, and what to avoid.`}
+              labels={{
+                title: 'Blueprint AI',
+                placeholder: `Ask about ${creatorHandle}'s vibe, how to engage, or what to avoid…`,
+                initial: `I've analysed **${creatorHandle}**'s content and built a Vibe Blueprint.\n\nAsk me:\n- What emotional state is this creator in?\n- How should fans engage with them right now?\n- What kinds of comments would score A+ for this content?\n- What should fans avoid?`,
+              }}
+            />
           </div>
-        </Section>
-
-      </div>
+        </div>
+      )}
     </div>
   )
 }
