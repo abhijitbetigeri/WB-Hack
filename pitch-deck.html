@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CCIP — WeaveHacks 4 Pitch</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8fafc; color: #0f172a; }
+
+  .deck { width: 100vw; height: 100vh; overflow: hidden; position: relative; }
+  .slide {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 64px 80px;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.4s ease;
+    background: #f8fafc;
+  }
+  .slide.active { opacity: 1; pointer-events: all; }
+
+  /* Accent blob */
+  .slide::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 400px;
+    top: -120px; right: -120px;
+    background: radial-gradient(ellipse, rgba(124,58,237,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* Nav */
+  .nav {
+    position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
+    display: flex; align-items: center; gap: 16px;
+    background: white; border: 1px solid #e2e8f0; border-radius: 999px;
+    padding: 10px 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    z-index: 100;
+  }
+  .nav button {
+    background: none; border: none; cursor: pointer; font-size: 18px;
+    color: #7c3aed; padding: 4px 8px; border-radius: 8px;
+    transition: background 0.15s;
+  }
+  .nav button:hover { background: #f3f0ff; }
+  .nav .counter { font-size: 12px; font-weight: 600; color: #64748b; min-width: 40px; text-align: center; }
+
+  /* Typography */
+  .eyebrow {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: #7c3aed; margin-bottom: 16px;
+  }
+  h1 { font-size: 64px; font-weight: 900; line-height: 1.05; color: #0f172a; }
+  h2 { font-size: 44px; font-weight: 800; line-height: 1.1; color: #0f172a; margin-bottom: 20px; }
+  h3 { font-size: 22px; font-weight: 700; color: #0f172a; margin-bottom: 8px; }
+  p  { font-size: 17px; color: #475569; line-height: 1.65; max-width: 680px; }
+  .sub { font-size: 20px; color: #64748b; margin-top: 16px; max-width: 600px; line-height: 1.5; }
+
+  /* Pill badge */
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 14px; border-radius: 999px; font-size: 12px; font-weight: 700;
+    border: 1px solid;
+  }
+  .badge-violet { background: #f3f0ff; color: #6d28d9; border-color: #ddd6fe; }
+  .badge-emerald { background: #ecfdf5; color: #065f46; border-color: #a7f3d0; }
+  .badge-sky { background: #f0f9ff; color: #0369a1; border-color: #bae6fd; }
+
+  /* Cards grid */
+  .grid { display: grid; gap: 20px; width: 100%; max-width: 900px; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .grid-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+
+  .card {
+    background: white; border: 1px solid #e2e8f0; border-radius: 16px;
+    padding: 24px; box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+  .card .icon { font-size: 28px; margin-bottom: 12px; }
+  .card h3 { font-size: 15px; font-weight: 700; color: #1e293b; margin-bottom: 6px; }
+  .card p { font-size: 13px; color: #64748b; line-height: 1.55; max-width: none; }
+
+  /* Logo */
+  .logo {
+    width: 72px; height: 72px; border-radius: 20px;
+    background: linear-gradient(135deg, #7c3aed, #4f46e5);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px; font-weight: 900; color: white;
+    box-shadow: 0 8px 24px rgba(124,58,237,0.3);
+    margin-bottom: 28px;
+  }
+
+  /* Pipeline arrow */
+  .pipeline {
+    display: flex; align-items: center; gap: 0; width: 100%; max-width: 860px;
+    margin-top: 32px;
+  }
+  .step {
+    flex: 1; background: white; border: 1px solid #e2e8f0; border-radius: 14px;
+    padding: 18px 14px; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    position: relative;
+  }
+  .step .num {
+    font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em;
+    color: #7c3aed; margin-bottom: 6px;
+  }
+  .step .label { font-size: 13px; font-weight: 700; color: #1e293b; }
+  .step .tech { font-size: 11px; color: #94a3b8; margin-top: 4px; }
+  .arrow { font-size: 18px; color: #c4b5fd; padding: 0 4px; flex-shrink: 0; }
+
+  /* Stat */
+  .stat-row { display: flex; gap: 24px; margin-top: 32px; }
+  .stat {
+    flex: 1; background: white; border: 1px solid #e2e8f0; border-radius: 16px;
+    padding: 24px; text-align: center;
+  }
+  .stat .val { font-size: 40px; font-weight: 900; color: #7c3aed; line-height: 1; }
+  .stat .label { font-size: 12px; font-weight: 600; color: #64748b; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+  /* Grade bar */
+  .grade-row { display: flex; gap: 8px; margin-top: 24px; align-items: flex-end; }
+  .bar { flex: 1; border-radius: 8px; display: flex; align-items: flex-end; justify-content: center; font-size: 13px; font-weight: 800; color: white; padding-bottom: 8px; }
+
+  /* Cover accent */
+  .cover-tags { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 32px; }
+
+  /* Slide-specific backgrounds */
+  .slide-cover { background: linear-gradient(145deg, #faf5ff 0%, #f0f9ff 50%, #f8fafc 100%); }
+  .slide-dark { background: linear-gradient(145deg, #1e1b4b 0%, #0f172a 100%); }
+  .slide-dark::before { background: radial-gradient(ellipse, rgba(139,92,246,0.2) 0%, transparent 70%); }
+  .slide-dark h2, .slide-dark h3, .slide-dark .eyebrow { color: #e2e8f0; }
+  .slide-dark .eyebrow { color: #a78bfa; }
+  .slide-dark p, .slide-dark .sub { color: #94a3b8; }
+  .slide-dark .card { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
+  .slide-dark .card h3 { color: #f1f5f9; }
+  .slide-dark .card p { color: #94a3b8; }
+
+  /* Align left on content slides */
+  .slide.left { align-items: flex-start; }
+  .slide.left p { max-width: 720px; }
+
+  /* Score table */
+  .score-table { width: 100%; max-width: 800px; border-collapse: collapse; margin-top: 24px; }
+  .score-table th { font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.06em; padding: 10px 16px; background: #f8fafc; border: 1px solid #e2e8f0; text-align: left; }
+  .score-table td { padding: 12px 16px; border: 1px solid #f1f5f9; font-size: 14px; color: #334155; }
+  .score-table tr:nth-child(even) td { background: #f8fafc; }
+
+  /* Quote */
+  .quote { font-size: 26px; font-weight: 700; color: #1e293b; line-height: 1.35; border-left: 4px solid #7c3aed; padding-left: 24px; max-width: 700px; }
+
+  /* Keyboard hint */
+  .hint { position: fixed; top: 20px; right: 24px; font-size: 11px; color: #cbd5e1; z-index: 100; }
+</style>
+</head>
+<body>
+<div class="hint">← → or click buttons to navigate</div>
+
+<div class="deck">
+
+<!-- SLIDE 1: Cover -->
+<div class="slide slide-cover active">
+  <div class="logo">C</div>
+  <div class="eyebrow">WeaveHacks 4 · Applied Intelligence</div>
+  <h1>CCIP</h1>
+  <p class="sub">Content Creators Intelligence Platform — multi-agent HumaneBench grading for YouTube & X/Twitter communities.</p>
+  <div class="cover-tags">
+    <span class="badge badge-violet">LangGraph</span>
+    <span class="badge badge-violet">WandB Weave</span>
+    <span class="badge badge-violet">Redis VL</span>
+    <span class="badge badge-sky">CopilotKit</span>
+    <span class="badge badge-sky">Apify</span>
+    <span class="badge badge-emerald">HumaneBench v3.0</span>
+  </div>
+</div>
+
+<!-- SLIDE 2: Problem -->
+<div class="slide left">
+  <div class="eyebrow">The Problem</div>
+  <h2>Creators are flying blind on community health.</h2>
+  <p>YouTube & X creators get thousands of comments. Most are noise — spam, toxicity, low-effort reactions. The few high-signal comments that represent real community sentiment are buried. There is no objective, repeatable way to grade them.</p>
+  <div class="stat-row">
+    <div class="stat"><div class="val">95%</div><div class="label">Comments never read by creator</div></div>
+    <div class="stat"><div class="val">0</div><div class="label">Standard frameworks for community health</div></div>
+    <div class="stat"><div class="val">∞</div><div class="label">Subjectivity in moderation decisions</div></div>
+  </div>
+</div>
+
+<!-- SLIDE 3: Solution -->
+<div class="slide left">
+  <div class="eyebrow">The Solution</div>
+  <h2>One URL → full community intelligence in seconds.</h2>
+  <p>Paste any YouTube or X link. CCIP's LangGraph supervisor orchestrates 4 specialist agents — scraping content, generating a vibe blueprint, indexing comments into Redis VL, and grading every comment with HumaneBench v3.0. All traced in WandB Weave.</p>
+  <div class="pipeline">
+    <div class="step"><div class="num">01</div><div class="label">ScraperAgent</div><div class="tech">Apify</div></div>
+    <div class="arrow">→</div>
+    <div class="step"><div class="num">02</div><div class="label">BlueprintAgent</div><div class="tech">WandB LLM</div></div>
+    <div class="arrow">→</div>
+    <div class="step"><div class="num">03</div><div class="label">IndexerAgent</div><div class="tech">Redis VL</div></div>
+    <div class="arrow">→</div>
+    <div class="step"><div class="num">04</div><div class="label">GraderAgent</div><div class="tech">HumaneBench</div></div>
+  </div>
+</div>
+
+<!-- SLIDE 4: HumaneBench -->
+<div class="slide left">
+  <div class="eyebrow">The Framework</div>
+  <h2>HumaneBench v3.0</h2>
+  <p>8 principles. Objective scores. A–F grades. Every comment evaluated across Respect Attention, Meaningful Choices, Enhance Capabilities, Dignity & Safety, Healthy Relationships, Long-term Wellbeing, Transparency, and Equity.</p>
+  <div class="grid grid-4" style="max-width:860px; margin-top:28px;">
+    <div class="card"><div class="icon">👁</div><h3>Attention</h3><p>Deserves viewer time</p></div>
+    <div class="card"><div class="icon">🔀</div><h3>Choices</h3><p>Offers real options</p></div>
+    <div class="card"><div class="icon">🌱</div><h3>Growth</h3><p>Helps audience grow</p></div>
+    <div class="card"><div class="icon">🛡</div><h3>Safety</h3><p>Respectful & safe</p></div>
+    <div class="card"><div class="icon">🤝</div><h3>Relationships</h3><p>Positive community</p></div>
+    <div class="card"><div class="icon">♾</div><h3>Wellbeing</h3><p>Lasting interests</p></div>
+    <div class="card"><div class="icon">🔍</div><h3>Honesty</h3><p>Authentic & truthful</p></div>
+    <div class="card"><div class="icon">⚖</div><h3>Equity</h3><p>Inclusive & fair</p></div>
+  </div>
+</div>
+
+<!-- SLIDE 5: Scoring -->
+<div class="slide left">
+  <div class="eyebrow">Grading System</div>
+  <h2>+1.0 to −1.0 per principle. A+ to F.</h2>
+  <p>Each of 8 principles scores +1.0 (Exemplary) / +0.5 (Acceptable) / −0.5 (Concerning) / −1.0 (Violation). Final score is the mean — grades map A+ (≥0.875) down to F.</p>
+  <table class="score-table">
+    <tr><th>Grade</th><th>Score Range</th><th>What it means</th></tr>
+    <tr><td><strong>A+</strong></td><td>≥ 0.875</td><td>Exemplary across all principles</td></tr>
+    <tr><td><strong>A</strong></td><td>≥ 0.625</td><td>Strong, high-signal community contribution</td></tr>
+    <tr><td><strong>B</strong></td><td>≥ 0.375</td><td>Good — minor room for improvement</td></tr>
+    <tr><td><strong>C</strong></td><td>≥ 0.125</td><td>Average — some concerning elements</td></tr>
+    <tr><td><strong>D</strong></td><td>≥ −0.125</td><td>Below average — notable violations</td></tr>
+    <tr><td><strong>F</strong></td><td>&lt; −0.125</td><td>Harmful — violates multiple principles</td></tr>
+  </table>
+</div>
+
+<!-- SLIDE 6: Architecture -->
+<div class="slide-dark slide left">
+  <div class="eyebrow">Architecture</div>
+  <h2>Built on W&B + LangGraph + Redis</h2>
+  <div class="grid grid-2" style="max-width:860px; margin-top: 8px;">
+    <div class="card">
+      <div class="icon">🔗</div>
+      <h3>LangGraph Supervisor</h3>
+      <p>Orchestrates the 4-agent pipeline. State machine with typed edges — scrape → blueprint → index → grade → done. Each agent is a LangGraph node with weave tracing.</p>
+    </div>
+    <div class="card">
+      <div class="icon">🔬</div>
+      <h3>WandB Weave + LLM</h3>
+      <p>All agent calls traced via <code>@weave.op</code>. LLM inference through WandB's OpenAI-compatible endpoint — Qwen3-14B-Instruct for blueprint + grading.</p>
+    </div>
+    <div class="card">
+      <div class="icon">🧠</div>
+      <h3>Redis VL + RAG</h3>
+      <p>Comments embedded with sentence-transformers (384-dim HNSW). HumaneBench KB stored in Redis VL. Grader uses RAG to pull relevant principle examples.</p>
+    </div>
+    <div class="card">
+      <div class="icon">💬</div>
+      <h3>CopilotKit AI Chat</h3>
+      <p>Three in-context AI panels — Blueprint AI, Vibe Audit AI, Prompt Chip AI — each wired to relevant CopilotReadable context. Powered by WandB LLM.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7: Outputs -->
+<div class="slide left">
+  <div class="eyebrow">What You Get</div>
+  <h2>Three intelligence layers, one pipeline.</h2>
+  <div class="grid grid-3" style="max-width:860px; margin-top: 16px;">
+    <div class="card">
+      <div class="icon">🎭</div>
+      <h3>Vibe Blueprint</h3>
+      <p>Creator's emotional state, community need (true intent), interaction boundaries, and AI-generated contextual prompt chips for fans.</p>
+    </div>
+    <div class="card">
+      <div class="icon">📊</div>
+      <h3>Comment Audit Feed</h3>
+      <p>Every comment graded A+ → F with per-principle dot breakdown. Click any comment to open the AI panel for deep-dive analysis.</p>
+    </div>
+    <div class="card">
+      <div class="icon">📈</div>
+      <h3>Vibe Report</h3>
+      <p>Monetizable Retention State — community alignment %, tier depth, high-signal ratio, grade distribution, and recommended action.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8: WandB Weave angle -->
+<div class="slide left">
+  <div class="eyebrow">WeaveHacks Angle</div>
+  <h2>Every agent call is a Weave trace.</h2>
+  <p>CCIP uses WandB Weave as the observability backbone. Every <code>@weave.op</code>-decorated specialist — scrape, blueprint generation, embedding, grading — appears as a trace in your W&B project. You get full cost, latency, and output lineage for every run.</p>
+  <div class="grid grid-3" style="max-width: 860px; margin-top: 28px;">
+    <div class="card">
+      <div class="icon">🔍</div>
+      <h3>Full trace lineage</h3>
+      <p>Parent run → child agents → LLM calls. Click into any comment grade to see the exact prompt + response chain.</p>
+    </div>
+    <div class="card">
+      <div class="icon">⚡</div>
+      <h3>WandB LLM inference</h3>
+      <p>OpenAI-compatible endpoint. One API key, Qwen3-14B for both blueprint and grading — all usage tracked in W&B.</p>
+    </div>
+    <div class="card">
+      <div class="icon">📦</div>
+      <h3>Zero extra infra</h3>
+      <p>WandB handles model serving and tracing. We bring LangGraph + Redis VL. No separate model infrastructure needed.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 9: Demo -->
+<div class="slide" style="text-align:center;">
+  <div class="eyebrow">Live Demo</div>
+  <div style="font-size: 80px; margin: 24px 0;">⚡</div>
+  <h2>Let's run it.</h2>
+  <p class="sub">Drop a YouTube URL. Watch 4 agents fire in sequence. See every comment graded A+ → F in real time. Ask the AI anything about the results.</p>
+  <div class="cover-tags" style="justify-content: center; margin-top: 32px;">
+    <span class="badge badge-violet">Scrape → Blueprint → Index → Grade</span>
+    <span class="badge badge-emerald">~60s end-to-end</span>
+    <span class="badge badge-sky">Weave traces live</span>
+  </div>
+</div>
+
+<!-- SLIDE 10: Thank you -->
+<div class="slide slide-cover" style="text-align:center;">
+  <div class="logo">C</div>
+  <div class="eyebrow">WeaveHacks 4</div>
+  <h1 style="font-size:52px;">Content Creators<br/>Intelligence Platform</h1>
+  <p class="sub">LangGraph · WandB Weave · Redis VL · CopilotKit · HumaneBench v3.0</p>
+  <div style="margin-top:40px; font-size:15px; color:#64748b;">
+    Built by <strong>Abhijit Betigeri</strong> · abhijitbetigeri29@gmail.com
+  </div>
+  <div class="cover-tags" style="justify-content:center; margin-top:20px;">
+    <span class="badge badge-violet">github.com/abhijitbetigeri/WB-Hack</span>
+  </div>
+</div>
+
+</div><!-- /.deck -->
+
+<!-- Nav -->
+<div class="nav">
+  <button id="prev" onclick="go(-1)">←</button>
+  <span class="counter" id="counter">1 / 10</span>
+  <button id="next" onclick="go(1)">→</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  let cur = 0;
+  function go(dir) {
+    slides[cur].classList.remove('active');
+    cur = Math.max(0, Math.min(slides.length - 1, cur + dir));
+    slides[cur].classList.add('active');
+    document.getElementById('counter').textContent = `${cur + 1} / ${slides.length}`;
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') go(1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   go(-1);
+  });
+</script>
+</body>
+</html>
