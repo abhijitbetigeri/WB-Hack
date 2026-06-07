@@ -11,7 +11,7 @@ Built for **WeaveHacks 4: Multi-Agent Orchestration Hackathon with Weights & Bia
 | | |
 |--|--|
 | 🚀 **Live Demo** | [ccip.streamlit.app](https://ccip.streamlit.app) |
-| 📊 **Pitch Deck** | [View slides](https://htmlpreview.github.io/?https://github.com/abhijitbetigeri/WB-Hack/blob/main/pitch-deck.html) |
+| 📊 **Pitch Deck** | [View slides](https://htmlpreview.github.io/?https://github.com/abhijitbetigeri/WB-Hack/blob/main/pitch-deck.html) · [PDF](https://github.com/abhijitbetigeri/WB-Hack/raw/main/pitch-deck.pdf) |
 | 🎥 **Demo video** | [Watch on Loom](https://www.loom.com/share/bfdfbb55f4514e119382189e68ab739a) |
 
 ---
@@ -218,4 +218,4 @@ Content creators on YouTube and X are drowning in comments — most of it noise,
 
 ### Pitch Deck
 
-[View slides](https://htmlpreview.github.io/?https://github.com/abhijitbetigeri/WB-Hack/blob/main/pitch-deck.html)
+[View slides (interactive)](https://htmlpreview.github.io/?https://github.com/abhijitbetigeri/WB-Hack/blob/main/pitch-deck.html) · [Download PDF](https://github.com/abhijitbetigeri/WB-Hack/raw/main/pitch-deck.pdf)
