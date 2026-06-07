@@ -2,7 +2,7 @@
 
 **Grade your community comments A–F with HumaneBench v3.0 — powered by a multi-agent LangGraph pipeline**
 
-Built for **WeaveHacks 4** · WandB Weave · Redis VL · CopilotKit · LangGraph · Apify
+Built for **WeaveHacks 4: Multi-Agent Orchestration Hackathon with Weights & Biases** · WandB Weave · Redis VL · CopilotKit · LangGraph · Apify
 
 ---
 

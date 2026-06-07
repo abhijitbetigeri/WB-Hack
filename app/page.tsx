@@ -372,7 +372,7 @@ export default function Home() {
 
         <footer className="border-t border-slate-200 px-6 py-4 mt-8">
           <div className="max-w-5xl mx-auto flex items-center justify-between text-[11px] text-slate-400">
-            <span>CCIP · WeaveHacks 4</span>
+            <span>CCIP · WeaveHacks 4: Multi-Agent Orchestration with W&B</span>
             <span>LangGraph · OpenAI Agents SDK · WandB Weave · Redis VL · Apify</span>
           </div>
         </footer>
