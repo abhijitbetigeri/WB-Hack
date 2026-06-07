@@ -193,6 +193,6 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Hackathon
 
-Built for the **Applied Intelligence Hackathon 2026** — using multi-agent AI to help content creators understand and grow their community.
+Built for **WeaveHacks 4: Multi-Agent Orchestration Hackathon with Weights & Biases** — using multi-agent AI to help content creators understand and grow their community.
 
 > _"CCIP — Content Creators Intelligence Platform: grade your community, build a better one."_
