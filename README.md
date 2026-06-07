@@ -2,13 +2,17 @@
 
 **Grade your community comments A–F with HumaneBench v3.0 — powered by a multi-agent LangGraph pipeline**
 
-Built for the **Applied Intelligence Hackathon 2026** · WandB Inference · Redis VL · CopilotKit
+Built for **WeaveHacks 4** · WandB Weave · Redis VL · CopilotKit · LangGraph · Apify
 
 ---
 
-## Demo
+## Links
 
-> **Demo video:** [Watch on Loom](https://www.loom.com/share/bfdfbb55f4514e119382189e68ab739a)
+| | |
+|--|--|
+| 🚀 **Live Demo** | [ccip.streamlit.app](https://ccip.streamlit.app) |
+| 📊 **Pitch Deck** | [View slides](https://htmlpreview.github.io/?https://github.com/abhijitbetigeri/WB-Hack/blob/main/pitch-deck.html) |
+| 🎥 **Demo video** | [Watch on Loom](https://www.loom.com/share/bfdfbb55f4514e119382189e68ab739a) |
 
 ---
 
