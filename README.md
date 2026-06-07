@@ -191,8 +191,31 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ---
 
-## Hackathon
+## Hackathon Submission — WeaveHacks 4
 
 Built for **WeaveHacks 4: Multi-Agent Orchestration Hackathon with Weights & Biases** — using multi-agent AI to help content creators understand and grow their community.
 
 > _"CCIP — Content Creators Intelligence Platform: grade your community, build a better one."_
+
+### Project Description
+
+Content creators on YouTube and X are drowning in comments — most of it noise, some of it harmful. CCIP is a multi-agent AI platform that grades every community comment **A–F** against **HumaneBench v3.0**, an 8-principle humane-design rubric covering dignity, wellbeing, transparency, and equity. A **LangGraph supervisor** orchestrates four specialist agents (Scraper → Blueprint → Indexer → Grader): it scrapes the video transcript and up to 50 comments via Apify, generates a **Vibe Blueprint** of the creator's intent using WandB Inference, indexes comments into **Redis VL** as embeddings, and grades each comment in parallel with WandB LLM + RAG. Every run is fully traced in **WandB Weave**. The creator gets a live-streaming dashboard with per-comment grades, violation flags, an analytics report, and **Vibe Audit AI** — a CopilotKit-powered chat that answers questions like "why did this comment get a D?" or "what's dragging my community score down?"
+
+### Partner Technologies
+
+| Technology | How it's used |
+|-----------|--------------|
+| **WandB Weave** | Full LLM trace observability — every BlueprintAgent + GraderAgent call is logged with inputs, outputs, and latency |
+| **WandB Inference** | LLM API for all agents (`OpenPipe/Qwen3-14B-Instruct`) — blueprint generation and HumaneBench grading |
+| **Redis VL** | Comment vector store — embeddings + semantic search for RAG-powered Vibe Audit AI |
+| **CopilotKit** | Vibe Audit AI in-app chat — creators query their graded comment set in natural language |
+| **Apify** | Content scraping — YouTube video transcript + comments; X/Twitter thread + replies |
+| **LangGraph** | Multi-agent orchestration — supervisor graph routing across 4 specialist agents |
+
+### Weave Dashboard
+
+[wandb.ai/abhijitbetigeri29-hackathon26/inference/weave](https://wandb.ai/abhijitbetigeri29-hackathon26/inference/weave)
+
+### Pitch Deck
+
+[View slides](https://htmlpreview.github.io/?https://github.com/abhijitbetigeri/WB-Hack/blob/main/pitch-deck.html)
