@@ -359,6 +359,6 @@ The goal isn't to punish bad comments. It's to make the good ones visible enough
 
 ---
 
-*Built for the Applied Intelligence Hackathon 2026 — using AI to foster human flourishing in content creation community.*
+*Built for WeaveHacks 4: Multi-Agent Orchestration Hackathon with Weights & Biases — using AI to foster human flourishing in content creation community.*
 
-*"Syntropimaxx — Social optimization sandboxes for human flourishing"*
+*"CCIP — Content Creators Intelligence Platform: grade your community, build a better one."*

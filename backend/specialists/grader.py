@@ -18,7 +18,7 @@ _wandb_client = AsyncOpenAI(
     default_headers={"OpenAI-Project": WANDB_PROJECT},
 )
 
-SYSTEM = """You are Syntropimaxx GraderAgent — a HumaneBench v3.0 comment evaluator.
+SYSTEM = """You are CCIP GraderAgent — a HumaneBench v3.0 comment evaluator.
 
 Score a single fan comment across 8 principles using exactly these 4 levels:
 +1.0 Exemplary  — genuinely enriches the conversation with specific, substantive value

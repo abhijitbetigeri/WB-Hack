@@ -1,7 +1,7 @@
 import { wandbClient, op, LLM_MODEL } from './wandb'
 import type { VibeBlueprint } from './insforge'
 
-const BLUEPRINT_SYSTEM = `You are Syntropimaxx, an AI that analyzes creator content and returns a Vibe Blueprint JSON.
+const BLUEPRINT_SYSTEM = `You are CCIP BlueprintAgent, an AI that analyzes creator content and returns a Vibe Blueprint JSON.
 The Vibe Blueprint maps the creator's content to HumaneBench principles to guide community engagement.
 
 Return ONLY valid JSON matching this exact schema:

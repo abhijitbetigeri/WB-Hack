@@ -22,7 +22,7 @@ _project = os.getenv("WANDB_PROJECT", "inference")
 weave.init(f"{_entity}/{_project}")
 
 # ── FastAPI ────────────────────────────────────────────────────────────────────
-app = FastAPI(title="Syntropimaxx Multi-Agent API")
+app = FastAPI(title="CCIP Multi-Agent API")
 
 app.add_middleware(
     CORSMiddleware,

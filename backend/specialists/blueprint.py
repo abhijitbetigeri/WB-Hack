@@ -15,7 +15,7 @@ _wandb_client = AsyncOpenAI(
     default_headers={"OpenAI-Project": WANDB_PROJECT},
 )
 
-SYSTEM = """You are Syntropimaxx BlueprintAgent. Analyze creator content and generate a Vibe Blueprint JSON.
+SYSTEM = """You are CCIP BlueprintAgent. Analyze creator content and generate a Vibe Blueprint JSON.
 
 The Vibe Blueprint captures: emotional state, community need, engagement boundaries, and conversation starters.
 It is used by fans to write better HumaneBench-aligned comments and by the GraderAgent as creator context.
